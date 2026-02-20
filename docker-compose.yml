@@ -1,0 +1,67 @@
+services:
+  # Next.js App
+  app:
+    build:
+      context: ./senja-wisata
+      dockerfile: Dockerfile
+    container_name: senja-wisata-app
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://senja:senja123@db:3306/senja_wisata
+      - NEXTAUTH_SECRET=senja-wisata-secret-key-2025
+      - NEXTAUTH_URL=http://localhost:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - senja-network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: senja-wisata-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: senja_wisata
+      MYSQL_USER: senja
+      MYSQL_PASSWORD: senja123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "senja", "-psenja123" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - senja-network
+
+  # phpMyAdmin (opsional, untuk kelola database via browser)
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: senja-wisata-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: senja
+      PMA_PASSWORD: senja123
+    depends_on:
+      - db
+    networks:
+      - senja-network
+
+volumes:
+  mysql_data:
+
+
+networks:
+  senja-network:
+    driver: bridge

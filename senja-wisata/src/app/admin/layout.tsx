@@ -1,0 +1,131 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth";
+import { useEffect } from "react";
+import { LayoutDashboard, Package, BookOpen, Users, LogOut, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const navItems = [
+    { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/admin/tours", label: "Kelola Tour", icon: Package },
+    { href: "/admin/bookings", label: "Kelola Booking", icon: BookOpen },
+    { href: "/admin/users", label: "Kelola Users", icon: Users },
+];
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    const { isAuthenticated, user, logout } = useAuthStore();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.push("/login");
+        } else if (user?.role === "user") {
+            router.push("/");
+        }
+    }, [isAuthenticated, user, router]);
+
+    if (!isAuthenticated || user?.role === "user") return null;
+
+    const currentNav = navItems.find((n) => pathname === n.href || (n.href !== "/admin" && pathname.startsWith(n.href)));
+
+    return (
+        <div className="min-h-screen bg-slate-50 flex">
+            {/* Sidebar */}
+            <aside className="hidden lg:flex flex-col w-64 bg-primary text-white shrink-0 sticky top-0 h-screen overflow-y-auto">
+                <div className="p-6 border-b border-white/10">
+                    <Link href="/" className="flex items-center gap-2">
+                        <svg width="28" height="28" viewBox="0 0 38 38" fill="none">
+                            <rect x="5" y="3" width="11" height="14" rx="5.5" fill="#2BBEE8" />
+                            <rect x="22" y="3" width="11" height="14" rx="5.5" fill="#2BBEE8" />
+                            <rect x="5" y="11" width="11" height="7" fill="#2BBEE8" />
+                            <rect x="22" y="11" width="11" height="7" fill="#2BBEE8" />
+                            <rect x="5" y="20" width="28" height="8" rx="4" fill="#2BBEE8" />
+                            <rect x="10" y="30" width="8" height="6" rx="3" fill="#2BBEE8" />
+                            <rect x="20" y="30" width="8" height="6" rx="3" fill="#2BBEE8" />
+                        </svg>
+                        <span className="font-bold text-white">Senja Wisata</span>
+                    </Link>
+                    <div className="mt-3">
+                        <span className="badge bg-blue/20 text-blue text-[10px] px-2 py-0.5">
+                            {user?.role === "owner" ? "👑 Owner" : "🛠 Admin"} Panel
+                        </span>
+                    </div>
+                </div>
+
+                {/* User info */}
+                <div className="p-6 border-b border-white/10">
+                    <div className="w-12 h-12 gradient-primary rounded-full flex items-center justify-center text-white font-bold text-xl mb-3 border-2 border-blue/30">
+                        {user?.name[0]}
+                    </div>
+                    <p className="font-semibold text-white">{user?.name}</p>
+                    <p className="text-white/50 text-sm">{user?.email}</p>
+                </div>
+
+                <nav className="flex-1 p-4 flex flex-col gap-1">
+                    {navItems.map((item) => {
+                        const active = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={cn(
+                                    "flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all",
+                                    active ? "bg-white/10 text-white" : "text-white/60 hover:bg-white/5 hover:text-white"
+                                )}
+                            >
+                                <item.icon size={18} />
+                                <span className="flex-1">{item.label}</span>
+                                {active && <ChevronRight size={14} className="opacity-50" />}
+                            </Link>
+                        );
+                    })}
+
+                    {/* Owner-only: link ke /owner */}
+                    {user?.role === "owner" && (
+                        <Link
+                            href="/owner"
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all text-amber-300 hover:bg-white/5 mt-2 border border-amber-300/20"
+                        >
+                            <span>👑</span>
+                            <span>Owner Dashboard</span>
+                        </Link>
+                    )}
+                </nav>
+
+                <div className="p-4 border-t border-white/10">
+                    <button
+                        onClick={() => { logout(); router.push("/"); }}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-accent transition-all w-full text-sm font-semibold"
+                    >
+                        <LogOut size={18} /> Keluar
+                    </button>
+                </div>
+            </aside>
+
+            <main className="flex-1 min-w-0">
+                {/* Top bar */}
+                <header className="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+                    <div>
+                        <h1 className="font-bold text-primary text-lg">
+                            {currentNav?.label || "Admin Panel"}
+                        </h1>
+                        <p className="text-xs text-slate-400">PT. Senja Wisata Indonesia</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Link href="/" className="btn btn-outline btn-sm gap-2 text-xs">
+                            Lihat Website
+                        </Link>
+                        <div className="w-8 h-8 gradient-primary rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            {user?.name[0]}
+                        </div>
+                    </div>
+                </header>
+
+                <div className="p-6 lg:p-8">{children}</div>
+            </main>
+        </div>
+    );
+}
