@@ -145,19 +145,7 @@ export default function HeroSection() {
                                     <div className="text-accent font-bold text-lg">Rp 8.500.000</div>
                                 </div>
                             </div>
-                            {/* Floating review card */}
-                            <motion.div
-                                animate={{ y: [-5, 5, -5] }}
-                                transition={{ duration: 4, repeat: Infinity }}
-                                className="absolute -bottom-6 -left-8 bg-white rounded-2xl p-4 shadow-card-hover"
-                            >
-                                <div className="flex items-center gap-2 mb-1">
-                                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={12} className="fill-amber-400 text-amber-400" />)}
-                                </div>
-                                <div className="font-bold text-sm text-primary">Rating Rata-rata</div>
-                                <div className="text-2xl font-bold text-accent">4.9</div>
-                                <div className="text-xs text-slate-400">dari 1.200+ ulasan</div>
-                            </motion.div>
+
                         </div>
                     </motion.div>
                 </div>
@@ -176,8 +164,8 @@ export default function HeroSection() {
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${activeTab === tab
-                                        ? "bg-primary text-white shadow-md"
-                                        : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                                    ? "bg-primary text-white shadow-md"
+                                    : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                                     }`}
                             >
                                 {tab}

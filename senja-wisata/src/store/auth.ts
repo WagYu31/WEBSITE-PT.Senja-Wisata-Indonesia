@@ -13,9 +13,11 @@ const DEMO_USERS: (User & { password: string })[] = [
 
 interface AuthStore {
     user: User | null;
+    isAuthenticated: boolean;
+    _hasHydrated: boolean;
+    setHasHydrated: (val: boolean) => void;
     login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
     logout: () => void;
-    isAuthenticated: boolean;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -23,8 +25,10 @@ export const useAuthStore = create<AuthStore>()(
         (set) => ({
             user: null,
             isAuthenticated: false,
+            _hasHydrated: false,
+            setHasHydrated: (val) => set({ _hasHydrated: val }),
             login: async (email, password) => {
-                await new Promise((r) => setTimeout(r, 800)); // simulate API
+                await new Promise((r) => setTimeout(r, 800));
                 const found = DEMO_USERS.find((u) => u.email === email && u.password === password);
                 if (found) {
                     const { password: _, ...user } = found;
@@ -35,6 +39,11 @@ export const useAuthStore = create<AuthStore>()(
             },
             logout: () => set({ user: null, isAuthenticated: false }),
         }),
-        { name: "sw-auth" }
+        {
+            name: "sw-auth",
+            onRehydrateStorage: () => (state) => {
+                state?.setHasHydrated(true);
+            },
+        }
     )
 );

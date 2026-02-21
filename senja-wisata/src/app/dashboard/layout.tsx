@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
         <div className="min-h-screen bg-slate-50 flex">
             {/* Sidebar */}
-            <aside className="hidden lg:flex flex-col w-64 bg-primary text-white shrink-0 sticky top-0 h-screen overflow-y-auto">
+            <aside className="hidden lg:flex flex-col w-64 text-white shrink-0 sticky top-0 h-screen overflow-y-auto" style={{ backgroundColor: '#05073C' }}>
                 <div className="p-6 border-b border-white/10">
                     <Link href="/" className="flex items-center gap-2">
                         <svg width="28" height="28" viewBox="0 0 38 38" fill="none">

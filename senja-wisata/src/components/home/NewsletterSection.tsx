@@ -14,7 +14,7 @@ export default function NewsletterSection() {
     };
 
     return (
-        <section className="section-sm bg-primary relative overflow-hidden">
+        <section className="section-sm relative overflow-hidden" style={{ backgroundColor: '#05073C' }}>
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 left-1/4 w-64 h-64 bg-blue/10 rounded-full blur-3xl" />
                 <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />

@@ -1,5 +1,48 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #05073C;
+  --color-primary-50: #E8E9F0;
+  --color-primary-100: #C5C7DC;
+  --color-primary-200: #9EA1C4;
+  --color-primary-300: #777BAC;
+  --color-primary-400: #585D98;
+  --color-primary-500: #393F84;
+  --color-primary-600: #2A2F6A;
+  --color-primary-700: #1B2050;
+  --color-primary-800: #0D1236;
+  --color-primary-900: #05073C;
+
+  --color-accent: #FC4C4D;
+  --color-accent-50: #FFF0F0;
+  --color-accent-100: #FFD6D6;
+  --color-accent-200: #FFADAD;
+  --color-accent-300: #FF8585;
+  --color-accent-400: #FC5C5D;
+  --color-accent-500: #FC4C4D;
+  --color-accent-600: #E53535;
+  --color-accent-700: #C01F1F;
+  --color-accent-800: #9B0E0E;
+  --color-accent-900: #750505;
+
+  --color-blue: #2BBEE8;
+  --color-blue-50: #E8F8FD;
+  --color-blue-100: #C4EEFA;
+  --color-blue-200: #9DE2F7;
+  --color-blue-300: #76D6F4;
+  --color-blue-400: #4ECAF1;
+  --color-blue-500: #2BBEE8;
+  --color-blue-600: #1AA4CC;
+  --color-blue-700: #0D89B0;
+  --color-blue-800: #056F93;
+  --color-blue-900: #005576;
+
+  --font-sans: var(--font-poppins), sans-serif;
+  --font-serif: var(--font-playfair), serif;
+  --radius: 0.75rem;
+}
+
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -285,5 +328,22 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Live Chat Widget */
+  @keyframes chat-slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.97);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .animate-chat-slide-up {
+    animation: chat-slide-up 0.25s ease-out forwards;
   }
 }

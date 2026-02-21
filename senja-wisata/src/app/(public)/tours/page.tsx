@@ -11,7 +11,7 @@ export default function ToursPage() {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState("popular");
     const [view, setView] = useState<"grid" | "list">("grid");
-    const [priceRange, setPriceRange] = useState<[number, number]>([0, 15000000]);
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 30000000]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const filtered = useMemo(() => {
@@ -33,9 +33,9 @@ export default function ToursPage() {
             {/* Page Header */}
             <div className="gradient-primary pt-32 pb-12">
                 <div className="container">
-                    <span className="italic font-serif text-blue text-lg">Jelajahi Indonesia</span>
+                    <span className="italic font-serif text-blue text-lg">Jelajahi Dunia Bersama Kami</span>
                     <h1 className="text-4xl lg:text-5xl font-bold text-white mt-2 mb-2">Semua Paket Wisata</h1>
-                    <p className="text-white/60">Beranda · Paket Wisata</p>
+                    <p className="text-white/60">Domestik & Luar Negeri · Beranda · Paket Wisata</p>
                 </div>
             </div>
 
@@ -107,7 +107,7 @@ export default function ToursPage() {
                                 <input
                                     type="range"
                                     min={0}
-                                    max={15000000}
+                                    max={30000000}
                                     step={500000}
                                     value={priceRange[1]}
                                     onChange={(e) => setPriceRange([0, Number(e.target.value)])}
@@ -115,13 +115,13 @@ export default function ToursPage() {
                                 />
                                 <div className="flex justify-between text-xs text-slate-500 mt-1">
                                     <span>Rp 0</span>
-                                    <span className="font-semibold text-accent">Rp {(priceRange[1] / 1000000).toFixed(1)}jt</span>
+                                    <span className="font-semibold text-accent">Rp {(priceRange[1] / 1000000).toFixed(0)}jt</span>
                                 </div>
                             </div>
 
                             {/* Reset */}
                             <button
-                                onClick={() => { setSelectedCategories([]); setPriceRange([0, 15000000]); setQuery(""); }}
+                                onClick={() => { setSelectedCategories([]); setPriceRange([0, 30000000]); setQuery(""); }}
                                 className="btn bg-slate-100 text-slate-600 hover:bg-slate-200 w-full text-sm"
                             >
                                 Reset Filter

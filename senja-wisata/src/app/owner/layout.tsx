@@ -16,19 +16,32 @@ const navItems = [
 ];
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
-    const { isAuthenticated, user, logout } = useAuthStore();
+    const { isAuthenticated, user, logout, _hasHydrated } = useAuthStore();
     const router = useRouter();
     const pathname = usePathname();
 
     useEffect(() => {
+        if (!_hasHydrated) return;
         if (!isAuthenticated) {
             router.push("/login");
         } else if (user?.role !== "owner") {
             router.push("/");
         }
-    }, [isAuthenticated, user, router]);
+    }, [isAuthenticated, user, router, _hasHydrated]);
+
+    if (!_hasHydrated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: '#2BBEE8', borderTopColor: 'transparent' }} />
+                    <p className="text-sm text-slate-400">Memuat...</p>
+                </div>
+            </div>
+        );
+    }
 
     if (!isAuthenticated || user?.role !== "owner") return null;
+
 
     const currentNav = navItems.find((n) => pathname === n.href || (n.href !== "/owner" && n.href !== "/admin" && pathname.startsWith(n.href)));
 

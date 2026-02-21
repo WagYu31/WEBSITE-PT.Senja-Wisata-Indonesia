@@ -158,3 +158,33 @@ INSERT INTO destinations (name, island, description, image) VALUES
 INSERT INTO promos (code, description, discount_type, discount_value, min_order, max_uses, expires_at) VALUES
 ('SENJA10', 'Diskon 10% untuk semua paket', 'percentage', 10.00, 1000000, 100, '2025-12-31'),
 ('WELCOME50', 'Diskon Rp 50.000 untuk member baru', 'fixed', 50000.00, 500000, 50, '2025-06-30');
+
+-- ============================================
+-- Live Chat Tables
+-- ============================================
+
+-- Chat Sessions
+CREATE TABLE IF NOT EXISTS chat_sessions (
+    id VARCHAR(36) PRIMARY KEY,
+    visitor_name VARCHAR(100) NOT NULL,
+    visitor_email VARCHAR(150),
+    status ENUM('bot','waiting','live','closed') DEFAULT 'bot',
+    unread_by_admin INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_updated (updated_at)
+);
+
+-- Chat Messages
+CREATE TABLE IF NOT EXISTS chat_messages (
+    id VARCHAR(36) PRIMARY KEY,
+    session_id VARCHAR(36) NOT NULL,
+    sender ENUM('user','bot','admin') NOT NULL,
+    sender_name VARCHAR(100),
+    text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (session_id) REFERENCES chat_sessions(id) ON DELETE CASCADE,
+    INDEX idx_session (session_id)
+);
+
