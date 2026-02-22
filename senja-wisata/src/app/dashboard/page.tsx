@@ -84,7 +84,7 @@ export default function UserDashboard() {
                     <div className="sm:text-right">
                         <div className="text-xs text-slate-400 mb-1">Booking ID</div>
                         <div className="font-mono font-bold text-sm text-primary">{mockBookings[0].id}</div>
-                        <button className="btn btn-outline btn-sm mt-3 text-xs">Lihat Detail</button>
+                        <Link href="/dashboard/trips" className="btn btn-outline btn-sm mt-3 text-xs">Lihat Detail</Link>
                     </div>
                 </div>
             </div>

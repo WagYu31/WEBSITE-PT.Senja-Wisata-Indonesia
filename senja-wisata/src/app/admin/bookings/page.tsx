@@ -7,18 +7,19 @@ import { Search, Clock, CheckCircle, XCircle, Package, X, User, MapPin, Calendar
 type Booking = {
     id: string; user: string; email: string; tour: string;
     date: string; guests: number; total: number;
-    status: string; created: string; phone?: string;
+    status: string; payment_status?: string; created: string; phone?: string;
+    refund_amount?: number; refund_percentage?: number;
 };
 
 const initialBookings: Booking[] = [
-    { id: "BK-2025-047", user: "Reza Firmansyah", email: "reza@mail.com", phone: "+62 812-0001-0001", tour: "Raja Ampat Paradise", date: "2025-03-15", guests: 2, total: 17000000, status: "pending", created: "2025-02-18" },
-    { id: "BK-2025-046", user: "Dewi Lestari", email: "dewi@mail.com", phone: "+62 812-0002-0002", tour: "Bali Complete Experience", date: "2025-03-10", guests: 3, total: 15600000, status: "confirmed", created: "2025-02-16" },
-    { id: "BK-2025-045", user: "Ahmad Fajar", email: "ahmad@mail.com", phone: "+62 812-0003-0003", tour: "Komodo Island Adventure", date: "2025-03-08", guests: 4, total: 28800000, status: "confirmed", created: "2025-02-14" },
-    { id: "BK-2025-044", user: "Siti Nur Aisyah", email: "siti@mail.com", phone: "+62 812-0004-0004", tour: "Bromo Sunrise Trekking", date: "2025-02-28", guests: 2, total: 3600000, status: "completed", created: "2025-02-10" },
-    { id: "BK-2025-043", user: "Budi Santoso", email: "budi@mail.com", phone: "+62 812-0005-0005", tour: "Lombok & Gili Islands", date: "2025-02-25", guests: 2, total: 9600000, status: "cancelled", created: "2025-02-08" },
-    { id: "BK-2025-042", user: "Linda Handayani", email: "linda@mail.com", phone: "+62 812-0006-0006", tour: "Yogyakarta Cultural Tour", date: "2025-02-20", guests: 4, total: 9600000, status: "completed", created: "2025-02-05" },
-    { id: "BK-2025-041", user: "Hendra Wijaya", email: "hendra@mail.com", phone: "+62 812-0007-0007", tour: "Raja Ampat Paradise", date: "2025-04-05", guests: 1, total: 8500000, status: "pending", created: "2025-02-19" },
-    { id: "BK-2025-040", user: "Melati Putri", email: "melati@mail.com", phone: "+62 812-0008-0008", tour: "Bali Complete Experience", date: "2025-04-12", guests: 2, total: 10400000, status: "confirmed", created: "2025-02-17" },
+    { id: "BK-2025-047", user: "Reza Firmansyah", email: "reza@mail.com", phone: "+62 812-0001-0001", tour: "Raja Ampat Paradise", date: "2025-03-15", guests: 2, total: 17000000, status: "pending", payment_status: "pending", created: "2025-02-18" },
+    { id: "BK-2025-046", user: "Dewi Lestari", email: "dewi@mail.com", phone: "+62 812-0002-0002", tour: "Bali Complete Experience", date: "2025-03-10", guests: 3, total: 15600000, status: "confirmed", payment_status: "paid", created: "2025-02-16" },
+    { id: "BK-2025-045", user: "Ahmad Fajar", email: "ahmad@mail.com", phone: "+62 812-0003-0003", tour: "Komodo Island Adventure", date: "2025-03-08", guests: 4, total: 28800000, status: "confirmed", payment_status: "paid", created: "2025-02-14" },
+    { id: "BK-2025-044", user: "Siti Nur Aisyah", email: "siti@mail.com", phone: "+62 812-0004-0004", tour: "Bromo Sunrise Trekking", date: "2025-02-28", guests: 2, total: 3600000, status: "completed", payment_status: "paid", created: "2025-02-10" },
+    { id: "BK-2025-043", user: "Budi Santoso", email: "budi@mail.com", phone: "+62 812-0005-0005", tour: "Lombok & Gili Islands", date: "2025-02-25", guests: 2, total: 9600000, status: "cancelled", payment_status: "refunded", refund_amount: 8640000, refund_percentage: 90, created: "2025-02-08" },
+    { id: "BK-2025-042", user: "Linda Handayani", email: "linda@mail.com", phone: "+62 812-0006-0006", tour: "Yogyakarta Cultural Tour", date: "2025-02-20", guests: 4, total: 9600000, status: "completed", payment_status: "paid", created: "2025-02-05" },
+    { id: "BK-2025-041", user: "Hendra Wijaya", email: "hendra@mail.com", phone: "+62 812-0007-0007", tour: "Raja Ampat Paradise", date: "2025-04-05", guests: 1, total: 8500000, status: "pending", payment_status: "pending", created: "2025-02-19" },
+    { id: "BK-2025-040", user: "Melati Putri", email: "melati@mail.com", phone: "+62 812-0008-0008", tour: "Bali Complete Experience", date: "2025-04-12", guests: 2, total: 10400000, status: "confirmed", payment_status: "paid", created: "2025-02-17" },
 ];
 
 const statusTabs = ["Semua", "pending", "confirmed", "completed", "cancelled"];
@@ -107,6 +108,7 @@ export default function AdminBookingsPage() {
                             <th className="text-left p-4 font-semibold text-slate-500 hidden lg:table-cell">Tour</th>
                             <th className="text-left p-4 font-semibold text-slate-500 hidden sm:table-cell">Tanggal Trip</th>
                             <th className="text-left p-4 font-semibold text-slate-500 hidden md:table-cell">Total</th>
+                            <th className="text-left p-4 font-semibold text-slate-500 hidden lg:table-cell">Pembayaran</th>
                             <th className="text-left p-4 font-semibold text-slate-500">Status</th>
                             <th className="text-left p-4 font-semibold text-slate-500">Aksi</th>
                         </tr>
@@ -129,6 +131,20 @@ export default function AdminBookingsPage() {
                                     <td className="p-4 hidden md:table-cell">
                                         <div className="font-semibold text-accent">{formatPrice(b.total)}</div>
                                         <div className="text-xs text-slate-400">{b.guests} orang</div>
+                                    </td>
+                                    <td className="p-4 hidden lg:table-cell">
+                                        {b.payment_status && (
+                                            <span className={`badge text-xs w-fit ${b.payment_status === "paid" ? "bg-emerald-50 text-emerald-600" :
+                                                    b.payment_status === "refunded" ? "bg-purple-50 text-purple-600" :
+                                                        b.payment_status === "pending" ? "badge-warning" :
+                                                            "bg-red-50 text-red-500"
+                                                }`}>
+                                                {{ paid: "💳 Lunas", pending: "⏳ Belum Bayar", refunded: "↩ Refund", cancelled: "✕ Batal", expired: "⌛ Expired" }[b.payment_status] || b.payment_status}
+                                            </span>
+                                        )}
+                                        {b.payment_status === "refunded" && b.refund_amount != null && (
+                                            <div className="text-xs text-purple-500 mt-0.5">{formatPrice(b.refund_amount)} ({b.refund_percentage}%)</div>
+                                        )}
                                     </td>
                                     <td className="p-4">
                                         <span className={`badge flex items-center gap-1 w-fit ${s.cls}`}>
@@ -202,6 +218,18 @@ export default function AdminBookingsPage() {
                                 <div>
                                     <div className="text-xs text-slate-400 mb-0.5">Total Pembayaran</div>
                                     <div className="text-2xl font-bold text-accent">{formatPrice(detailBooking.total)}</div>
+                                    {detailBooking.payment_status && (
+                                        <span className={`badge text-xs mt-1 ${detailBooking.payment_status === "paid" ? "bg-emerald-50 text-emerald-600" :
+                                                detailBooking.payment_status === "refunded" ? "bg-purple-50 text-purple-600" :
+                                                    detailBooking.payment_status === "pending" ? "badge-warning" :
+                                                        "bg-red-50 text-red-500"
+                                            }`}>
+                                            {{ paid: "💳 Lunas", pending: "⏳ Belum Bayar", refunded: "↩ Refund", cancelled: "✕ Batal", expired: "⌛ Expired" }[detailBooking.payment_status] || detailBooking.payment_status}
+                                        </span>
+                                    )}
+                                    {detailBooking.payment_status === "refunded" && detailBooking.refund_amount != null && (
+                                        <div className="text-xs text-purple-600 mt-1">Refund: {formatPrice(detailBooking.refund_amount)} ({detailBooking.refund_percentage}%)</div>
+                                    )}
                                 </div>
                                 <span className={`badge flex items-center gap-1 ${statusMap[detailBooking.status].cls}`}>
                                     {statusMap[detailBooking.status].icon} {statusMap[detailBooking.status].label}

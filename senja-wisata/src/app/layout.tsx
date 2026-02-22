@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -36,11 +37,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const midtransClientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
+  const isProduction = process.env.MIDTRANS_IS_PRODUCTION === "true";
+  const snapUrl = isProduction
+    ? "https://app.midtrans.com/snap/snap.js"
+    : "https://app.sandbox.midtrans.com/snap/snap.js";
+
   return (
     <html lang="id" className={`${poppins.variable} ${playfair.variable}`}>
       <body className="font-sans antialiased bg-white text-primary-900">
         {children}
+        <Script
+          src={snapUrl}
+          data-client-key={midtransClientKey}
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );
 }
+

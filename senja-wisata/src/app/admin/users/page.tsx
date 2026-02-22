@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search, UserCheck, Shield, Crown, Edit2, Trash2, Mail, X, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Search, UserCheck, Shield, Crown, Edit2, Trash2, Mail, X } from "lucide-react";
 
 type User = { id: number; name: string; email: string; role: string; totalBookings: number; joined: string; avatar: string; };
 
@@ -33,11 +34,10 @@ const roleTabLabels: Record<string, string> = { "Semua": "Semua", owner: "Owner"
 const allRoles = ["user", "admin", "owner"];
 
 export default function AdminUsersPage() {
+    const router = useRouter();
     const [users, setUsers] = useState<User[]>(initialUsers);
     const [search, setSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("Semua");
-    const [editTarget, setEditTarget] = useState<User | null>(null);
-    const [editRole, setEditRole] = useState("");
     const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
     const [successMsg, setSuccessMsg] = useState("");
 
@@ -49,18 +49,6 @@ export default function AdminUsersPage() {
     });
 
     const countByRole = (r: string) => r === "Semua" ? users.length : users.filter((u) => u.role === r).length;
-
-    const openEdit = (u: User) => {
-        setEditTarget(u);
-        setEditRole(u.role);
-    };
-
-    const handleSaveRole = () => {
-        if (!editTarget) return;
-        setUsers(prev => prev.map(u => u.id === editTarget.id ? { ...u, role: editRole } : u));
-        setEditTarget(null);
-        showToast(`Role ${editTarget.name} diubah menjadi ${editRole}.`);
-    };
 
     const handleDelete = () => {
         if (!deleteTarget) return;
@@ -150,8 +138,8 @@ export default function AdminUsersPage() {
                                     <td className="p-4 hidden lg:table-cell text-slate-400 text-xs">{u.joined}</td>
                                     <td className="p-4">
                                         <div className="flex items-center gap-1">
-                                            <button onClick={() => openEdit(u)}
-                                                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-amber-50 hover:text-amber-500 transition-all" title="Edit role">
+                                            <button onClick={() => router.push(`/admin/users/${u.id}`)}
+                                                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-amber-50 hover:text-amber-500 transition-all" title="Edit profil">
                                                 <Edit2 size={15} />
                                             </button>
                                             <button onClick={() => setDeleteTarget(u)}
@@ -174,62 +162,6 @@ export default function AdminUsersPage() {
                 )}
             </div>
 
-            {/* ===== MODAL: Edit Role ===== */}
-            {editTarget && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                    <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 space-y-5">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-bold" style={{ color: '#05073C' }}>Ubah Role</h3>
-                            <button onClick={() => setEditTarget(null)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400">
-                                <X size={18} />
-                            </button>
-                        </div>
-
-                        {/* User Info */}
-                        <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold"
-                                style={{ backgroundColor: avatarColors[editTarget.role] }}>
-                                {editTarget.avatar}
-                            </div>
-                            <div>
-                                <div className="font-semibold text-sm" style={{ color: '#05073C' }}>{editTarget.name}</div>
-                                <div className="text-xs text-slate-400">{editTarget.email}</div>
-                            </div>
-                        </div>
-
-                        {/* Role Picker */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-slate-600">Pilih Role</label>
-                            {allRoles.map(role => {
-                                const info = roleInfo[role];
-                                return (
-                                    <button key={role} onClick={() => setEditRole(role)}
-                                        className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left ${editRole === role ? "border-transparent" : "border-slate-100 hover:border-slate-200"}`}
-                                        style={editRole === role ? { borderColor: '#05073C', backgroundColor: '#F0F1F7' } : {}}>
-                                        <span className={`badge flex items-center gap-1 ${info.cls}`}>{info.icon} {info.label}</span>
-                                        <span className="text-xs text-slate-500 flex-1">
-                                            {role === "user" ? "Dapat booking tour" : role === "admin" ? "Akses dashboard admin" : "Akses penuh sistem"}
-                                        </span>
-                                        {editRole === role && <Check size={16} style={{ color: '#05073C' }} />}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        <div className="flex gap-3">
-                            <button onClick={() => setEditTarget(null)}
-                                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all">
-                                Batal
-                            </button>
-                            <button onClick={handleSaveRole}
-                                className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
-                                style={{ backgroundColor: '#05073C' }}>
-                                Simpan Role
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* ===== MODAL: Konfirmasi Hapus ===== */}
             {deleteTarget && (

@@ -4,11 +4,25 @@ import { use, useState } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { motion } from "framer-motion";
-import { MapPin, Clock, Users, Star, CheckCircle, XCircle, Minus, Plus, Calendar, ChevronRight } from "lucide-react";
+import { MapPin, Clock, Users, Star, CheckCircle, XCircle, Minus, Plus, Calendar, ChevronRight, Loader2 } from "lucide-react";
 import { tours } from "@/lib/data";
 import { formatPrice } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth";
 import { useRouter } from "next/navigation";
+
+// Declare Midtrans Snap on window
+declare global {
+    interface Window {
+        snap?: {
+            pay: (token: string, options: {
+                onSuccess?: (result: Record<string, unknown>) => void;
+                onPending?: (result: Record<string, unknown>) => void;
+                onError?: (result: Record<string, unknown>) => void;
+                onClose?: () => void;
+            }) => void;
+        };
+    }
+}
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -20,17 +34,96 @@ export default function TourDetailPage({ params }: Props) {
     if (!tour) notFound();
 
     const router = useRouter();
-    const { isAuthenticated } = useAuthStore();
+    const { isAuthenticated, user } = useAuthStore();
     const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("Overview");
     const [activeImg, setActiveImg] = useState(0);
     const [adults, setAdults] = useState(2);
     const [children, setChildren] = useState(0);
     const [date, setDate] = useState("");
+    const [isBooking, setIsBooking] = useState(false);
+    const [bookingError, setBookingError] = useState("");
     const total = tour.price * (adults + children * 0.5);
 
-    const handleBook = () => {
+    const handleBook = async () => {
         if (!isAuthenticated) { router.push("/login"); return; }
-        router.push("/dashboard");
+        if (!date) { setBookingError("Pilih tanggal berangkat terlebih dahulu"); return; }
+        setBookingError("");
+        setIsBooking(true);
+
+        try {
+            const res = await fetch("/api/booking", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    tourId: tour.id,
+                    tourDate: date,
+                    adults,
+                    children,
+                    userId: user?.id,
+                    userName: user?.name,
+                    userEmail: user?.email,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setBookingError(data.error || "Gagal membuat booking");
+                setIsBooking(false);
+                return;
+            }
+
+            // Open Midtrans Snap popup
+            if (window.snap && data.snapToken) {
+                const orderId = data.orderId;
+                window.snap.pay(data.snapToken, {
+                    onSuccess: async () => {
+                        // Confirm payment status immediately (webhook can't reach localhost in dev)
+                        try {
+                            await fetch("/api/booking/confirm", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ orderId }),
+                            });
+                        } catch { /* ignore */ }
+                        router.push("/dashboard/trips?payment=success");
+                    },
+                    onPending: async (result: Record<string, unknown>) => {
+                        // Capture VA number from Midtrans result and save to store
+                        try {
+                            const vaNumbers = result.va_numbers as Array<{ bank: string; va_number: string }> | undefined;
+                            const va = vaNumbers?.[0];
+                            if (va) {
+                                await fetch("/api/booking/va", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ orderId, vaNumber: va.va_number, vaBank: va.bank }),
+                                });
+                            }
+                        } catch { /* ignore */ }
+                        router.push("/dashboard/trips?payment=pending");
+                    },
+                    onError: () => {
+                        setBookingError("Pembayaran gagal. Silakan coba lagi.");
+                        setIsBooking(false);
+                    },
+                    onClose: () => {
+                        setIsBooking(false);
+                    },
+                });
+            } else {
+                // Fallback: redirect to Midtrans payment page
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    setBookingError("Midtrans Snap belum siap. Silakan muat ulang halaman.");
+                    setIsBooking(false);
+                }
+            }
+        } catch {
+            setBookingError("Terjadi kesalahan. Silakan coba lagi.");
+            setIsBooking(false);
+        }
     };
 
     return (
@@ -216,9 +309,17 @@ export default function TourDetailPage({ params }: Props) {
                                 </div>
                             </div>
 
-                            <button onClick={handleBook} className="btn btn-primary w-full text-base">
-                                Pesan Sekarang
+                            <button onClick={handleBook} disabled={isBooking}
+                                className="btn btn-primary w-full text-base disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                {isBooking ? (
+                                    <><Loader2 size={18} className="animate-spin" /> Memproses...</>
+                                ) : (
+                                    "Pesan Sekarang"
+                                )}
                             </button>
+                            {bookingError && (
+                                <p className="text-xs text-red-500 text-center mt-2 font-medium">{bookingError}</p>
+                            )}
                             <p className="text-xs text-slate-400 text-center mt-2">Tidak ada biaya tersembunyi</p>
                         </div>
                     </aside>
