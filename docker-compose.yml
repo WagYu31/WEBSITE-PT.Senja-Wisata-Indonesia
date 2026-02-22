@@ -7,7 +7,7 @@ services:
     container_name: senja-wisata-app
     restart: unless-stopped
     ports:
-      - "3001:3000"
+      - "3000:3000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=mysql://senja:senja123@db:3306/senja_wisata

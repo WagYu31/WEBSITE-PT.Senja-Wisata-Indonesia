@@ -1,11 +1,13 @@
-import midtransClient from "midtrans-client";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const MidtransClient = require("midtrans-client");
 
 // Midtrans Snap client (singleton)
-const globalForMidtrans = global as typeof global & { snap?: midtransClient.Snap };
+const globalForMidtrans = global as typeof global & { snap?: unknown };
 
-export const snap: midtransClient.Snap =
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const snap: any =
     globalForMidtrans.snap ??
-    new midtransClient.Snap({
+    new MidtransClient.Snap({
         isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
         serverKey: process.env.MIDTRANS_SERVER_KEY ?? "",
         clientKey: process.env.MIDTRANS_CLIENT_KEY ?? "",

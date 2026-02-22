@@ -48,7 +48,7 @@ export async function PATCH(
         if (updates.length === 0) return NextResponse.json({ error: "Tidak ada perubahan" }, { status: 400 });
 
         values.push(id);
-        await db.execute(`UPDATE chat_sessions SET ${updates.join(", ")} WHERE id = ?`, values);
+        await db.execute(`UPDATE chat_sessions SET ${updates.join(", ")} WHERE id = ?`, values as any[]);
 
         notifyClients({ type: "session_updated", sessionId: id, status });
 
