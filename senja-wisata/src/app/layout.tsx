@@ -34,7 +34,7 @@ export const metadata: Metadata = {
       "Temukan paket wisata terbaik Indonesia. Dari Raja Ampat hingga Bali — kami menghadirkan pengalaman perjalanan tak terlupakan dengan harga terbaik.",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://fluentlya.com/og-image.png",
         width: 1024,
         height: 1024,
         alt: "Senja Wisata Indonesia — Liburan Impian Anda",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     title: "PT. Senja Wisata Indonesia — Liburan Impian Anda",
     description:
       "Temukan paket wisata terbaik Indonesia. Dari Raja Ampat hingga Bali — kami menghadirkan pengalaman perjalanan tak terlupakan.",
-    images: ["/og-image.png"],
+    images: ["https://fluentlya.com/og-image.png"],
   },
 };
 

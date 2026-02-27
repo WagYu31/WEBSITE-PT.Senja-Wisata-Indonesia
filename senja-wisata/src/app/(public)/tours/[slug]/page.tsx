@@ -73,7 +73,13 @@ export default function TourDetailPage({ params }: Props) {
         const errors: string[] = [];
         passengers.forEach((p, i) => {
             if (!p.name.trim()) errors.push(`Nama peserta ${i + 1} wajib diisi`);
-            if (!p.idNumber.trim()) errors.push(`No. KTP/Paspor peserta ${i + 1} wajib diisi`);
+            if (!p.idNumber.trim()) {
+                errors.push(`No. KTP/Paspor peserta ${i + 1} wajib diisi`);
+            } else if (!/^[a-zA-Z0-9]+$/.test(p.idNumber.trim())) {
+                errors.push(`No. KTP/Paspor peserta ${i + 1} hanya boleh huruf dan angka`);
+            } else if (p.idNumber.trim().length < 6 || p.idNumber.trim().length > 16) {
+                errors.push(`No. KTP/Paspor peserta ${i + 1} harus 6-16 karakter`);
+            }
             if (!p.birthDate) errors.push(`Tanggal lahir peserta ${i + 1} wajib diisi`);
         });
         if (!contactPhone.trim()) errors.push("No. HP pemesan wajib diisi");
@@ -465,10 +471,15 @@ export default function TourDetailPage({ params }: Props) {
                                                     <input
                                                         type="text"
                                                         value={pax.idNumber}
-                                                        onChange={e => updatePassenger(idx, "idNumber", e.target.value)}
+                                                        onChange={e => {
+                                                            const val = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+                                                            if (val.length <= 16) updatePassenger(idx, "idNumber", val);
+                                                        }}
                                                         placeholder="3201xxxxxxxxxxxx"
+                                                        maxLength={16}
                                                         className="form-input pl-9 text-sm"
                                                     />
+                                                    <p className="text-[10px] text-slate-400 mt-0.5">KTP: 16 digit | Paspor: 6-9 karakter</p>
                                                 </div>
                                             </div>
                                             <div>
