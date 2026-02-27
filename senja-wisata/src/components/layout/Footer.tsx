@@ -35,12 +35,12 @@ const socials = [
 export default function Footer() {
     return (
         <footer className="text-white" style={{ backgroundColor: '#05073C' }}>
-            <div className="container py-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+            <div className="container py-10 md:py-16">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-10">
                     {/* Brand */}
-                    <div className="lg:col-span-2">
-                        <Link href="/" className="flex items-center gap-2.5 mb-4">
-                            <svg width="36" height="36" viewBox="0 0 38 38" fill="none">
+                    <div className="col-span-2 lg:col-span-2">
+                        <Link href="/" className="flex items-center gap-2.5 mb-3">
+                            <svg width="32" height="32" viewBox="0 0 38 38" fill="none">
                                 <rect x="5" y="3" width="11" height="14" rx="5.5" fill="#2BBEE8" />
                                 <rect x="22" y="3" width="11" height="14" rx="5.5" fill="#2BBEE8" />
                                 <rect x="5" y="11" width="11" height="7" fill="#2BBEE8" />
@@ -54,35 +54,36 @@ export default function Footer() {
                                 <div className="text-[10px] text-white/50">PT. Senja Wisata Indonesia</div>
                             </div>
                         </Link>
-                        <p className="text-white/60 text-sm leading-relaxed mb-6 max-w-xs">
+                        <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-xs hidden md:block">
                             Menghadirkan pengalaman wisata terbaik ke seluruh penjuru Indonesia. Ribuan traveler telah mempercayakan perjalanan impian mereka kepada kami.
                         </p>
-                        <div className="flex flex-col gap-3 text-sm text-white/60">
-                            <a href="https://maps.google.com" className="flex items-center gap-2 hover:text-blue transition-colors">
-                                <MapPin size={15} className="text-blue shrink-0" />
-                                Jl. Wisata Indah No. 12, Jakarta Selatan 12345
+                        <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs md:text-sm text-white/60 md:flex-col md:gap-3">
+                            <a href="https://maps.google.com" className="flex items-center gap-1.5 hover:text-blue transition-colors">
+                                <MapPin size={13} className="text-blue shrink-0" />
+                                <span className="hidden md:inline">Jl. Wisata Indah No. 12, Jakarta Selatan 12345</span>
+                                <span className="md:hidden">Jakarta Selatan</span>
                             </a>
-                            <a href="tel:+628123456789" className="flex items-center gap-2 hover:text-blue transition-colors">
-                                <Phone size={15} className="text-blue shrink-0" />
+                            <a href="tel:+628123456789" className="flex items-center gap-1.5 hover:text-blue transition-colors">
+                                <Phone size={13} className="text-blue shrink-0" />
                                 +62 812-3456-7890
                             </a>
-                            <a href="mailto:info@senjawisata.com" className="flex items-center gap-2 hover:text-blue transition-colors">
-                                <Mail size={15} className="text-blue shrink-0" />
+                            <a href="mailto:info@senjawisata.com" className="flex items-center gap-1.5 hover:text-blue transition-colors">
+                                <Mail size={13} className="text-blue shrink-0" />
                                 info@senjawisata.com
                             </a>
                         </div>
                     </div>
 
-                    {/* Links */}
+                    {/* Links - 2 col grid on mobile */}
                     {Object.entries(footerLinks).map(([key, links]) => (
                         <div key={key}>
-                            <h3 className="font-bold mb-4 text-sm uppercase tracking-wider text-white/40">
+                            <h3 className="font-bold mb-2 md:mb-4 text-xs md:text-sm uppercase tracking-wider text-white/40">
                                 {key === "paketWisata" ? "Paket Wisata" : key === "destinasi" ? "Destinasi" : "Perusahaan"}
                             </h3>
-                            <ul className="flex flex-col gap-2.5">
+                            <ul className="flex flex-col gap-1.5 md:gap-2.5">
                                 {links.map((link) => (
                                     <li key={link.label}>
-                                        <Link href={link.href} className="text-sm text-white/60 hover:text-blue transition-colors">
+                                        <Link href={link.href} className="text-xs md:text-sm text-white/60 hover:text-blue transition-colors">
                                             {link.label}
                                         </Link>
                                     </li>
@@ -93,8 +94,8 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom bar */}
-                <div className="border-t border-white/10 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-sm text-white/40">
+                <div className="border-t border-white/10 mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <p className="text-xs md:text-sm text-white/40">
                         © 2025 PT. Senja Wisata Indonesia. All rights reserved.
                     </p>
                     <div className="flex items-center gap-2">
@@ -103,9 +104,9 @@ export default function Footer() {
                                 key={s.label}
                                 href={s.href}
                                 aria-label={s.label}
-                                className="w-9 h-9 rounded-full bg-white/10 hover:bg-blue flex items-center justify-center text-white/60 hover:text-white transition-all duration-200"
+                                className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/10 hover:bg-blue flex items-center justify-center text-white/60 hover:text-white transition-all duration-200"
                             >
-                                <s.icon size={15} />
+                                <s.icon size={14} />
                             </a>
                         ))}
                     </div>
