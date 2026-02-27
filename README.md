@@ -173,6 +173,6 @@ Akses: `http://localhost:3000` | phpMyAdmin: `http://localhost:8080`
 ---
 
 <div align="center">
-  <p>Dibuat dengan ❤️ oleh <strong>WagYu31</strong></p>
+  <p>Dibuat oleh <strong>WagYu31</strong></p>
   <p>PT. Senja Wisata Indonesia — <em>Liburan Impian Anda</em></p>
 </div>
