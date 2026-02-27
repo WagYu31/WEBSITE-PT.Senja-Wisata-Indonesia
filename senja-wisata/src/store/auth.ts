@@ -28,14 +28,28 @@ export const useAuthStore = create<AuthStore>()(
             _hasHydrated: false,
             setHasHydrated: (val) => set({ _hasHydrated: val }),
             login: async (email, password) => {
-                await new Promise((r) => setTimeout(r, 800));
-                const found = DEMO_USERS.find((u) => u.email === email && u.password === password);
-                if (found) {
-                    const { password: _, ...user } = found;
-                    set({ user, isAuthenticated: true });
-                    return { success: true };
+                try {
+                    const res = await fetch("/api/auth/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email, password }),
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        set({ user: data.user, isAuthenticated: true });
+                        return { success: true };
+                    }
+                    return { success: false, error: data.error || "Email atau password salah" };
+                } catch {
+                    // Fallback to demo accounts if API fails
+                    const found = DEMO_USERS.find((u) => u.email === email && u.password === password);
+                    if (found) {
+                        const { password: _, ...user } = found;
+                        set({ user, isAuthenticated: true });
+                        return { success: true };
+                    }
+                    return { success: false, error: "Email atau password salah" };
                 }
-                return { success: false, error: "Email atau password salah" };
             },
             logout: () => set({ user: null, isAuthenticated: false }),
         }),

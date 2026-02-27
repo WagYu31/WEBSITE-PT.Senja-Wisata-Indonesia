@@ -109,7 +109,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="flex justify-end">
-                            <a href="#" className="text-sm text-accent hover:underline">Lupa password?</a>
+                            <Link href="/forgot-password" className="text-sm text-accent hover:underline">Lupa password?</Link>
                         </div>
 
                         <button type="submit" disabled={loading} className="btn btn-primary w-full text-base py-3.5 disabled:opacity-60 disabled:cursor-not-allowed">
