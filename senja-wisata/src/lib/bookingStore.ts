@@ -34,6 +34,9 @@ export const bookingStore = {
             g.__bookingStore!.unshift(booking);
         }
     },
+    getAll(): BookingRecord[] {
+        return [...g.__bookingStore!];
+    },
     getByUserId(userId: number): BookingRecord[] {
         return g.__bookingStore!.filter(b => b.user_id === userId);
     },
@@ -41,7 +44,7 @@ export const bookingStore = {
         return g.__bookingStore!.find(b => b.booking_code === code);
     },
     updateStatus(orderId: string, status: string, paymentStatus: string) {
-        const b = g.__bookingStore!.find(b => b.midtrans_order_id === orderId);
+        const b = g.__bookingStore!.find(b => b.midtrans_order_id === orderId || b.booking_code === orderId);
         if (b) {
             b.status = status;
             b.payment_status = paymentStatus;

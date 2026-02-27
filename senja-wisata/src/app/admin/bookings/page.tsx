@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatPrice } from "@/lib/utils";
-import { Search, Clock, CheckCircle, XCircle, Package, X, User, MapPin, Calendar, Users } from "lucide-react";
+import { Search, Clock, CheckCircle, XCircle, Package, X, User, MapPin, Calendar, Users, CheckSquare } from "lucide-react";
 
 type Booking = {
     id: string; user: string; email: string; tour: string;
@@ -40,6 +40,33 @@ export default function AdminBookingsPage() {
     const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
     const [successMsg, setSuccessMsg] = useState("");
 
+    // Fetch real bookings from API and merge with dummy data
+    useEffect(() => {
+        fetch("/api/booking/all")
+            .then(r => r.json())
+            .then(data => {
+                if (data.bookings && data.bookings.length > 0) {
+                    const realBookings: Booking[] = data.bookings.map((b: Record<string, unknown>) => ({
+                        id: (b.booking_code as string) || String(b.id),
+                        user: (b.user_name as string) || "Guest",
+                        email: (b.user_email as string) || "",
+                        tour: (b.tour_title as string) || "",
+                        date: (b.tour_date as string) || "",
+                        guests: Number(b.guests) || 0,
+                        total: Number(b.total_price) || 0,
+                        status: (b.status as string) || "pending",
+                        payment_status: (b.payment_status as string) || "pending",
+                        created: (b.created_at as string) || "",
+                    }));
+                    // Merge: real bookings first, then dummy ones not already present
+                    const realIds = new Set(realBookings.map(b => b.id));
+                    const merged = [...realBookings, ...initialBookings.filter(b => !realIds.has(b.id))];
+                    setBookings(merged);
+                }
+            })
+            .catch(() => { });
+    }, []);
+
     const filtered = bookings.filter((b) => {
         const matchTab = activeTab === "Semua" || b.status === activeTab;
         const matchSearch = b.user.toLowerCase().includes(search.toLowerCase()) ||
@@ -50,10 +77,22 @@ export default function AdminBookingsPage() {
 
     const countByStatus = (s: string) => s === "Semua" ? bookings.length : bookings.filter((b) => b.status === s).length;
 
-    const updateStatus = (id: string, status: string) => {
+    const updateStatus = async (id: string, status: string) => {
         setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
         setDetailBooking(prev => prev ? { ...prev, status } : null);
-        showToast(status === "confirmed" ? "Booking berhasil dikonfirmasi!" : status === "cancelled" ? "Booking dibatalkan." : "Status diperbarui.");
+        // Persist to backend
+        try {
+            await fetch("/api/booking/update-status", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ bookingCode: id, status }),
+            });
+        } catch { /* ignore */ }
+        showToast(
+            status === "confirmed" ? "Booking berhasil dikonfirmasi!" :
+                status === "completed" ? "Booking ditandai selesai!" :
+                    status === "cancelled" ? "Booking dibatalkan." : "Status diperbarui."
+        );
     };
 
     const showToast = (msg: string) => {
@@ -135,9 +174,9 @@ export default function AdminBookingsPage() {
                                     <td className="p-4 hidden lg:table-cell">
                                         {b.payment_status && (
                                             <span className={`badge text-xs w-fit ${b.payment_status === "paid" ? "bg-emerald-50 text-emerald-600" :
-                                                    b.payment_status === "refunded" ? "bg-purple-50 text-purple-600" :
-                                                        b.payment_status === "pending" ? "badge-warning" :
-                                                            "bg-red-50 text-red-500"
+                                                b.payment_status === "refunded" ? "bg-purple-50 text-purple-600" :
+                                                    b.payment_status === "pending" ? "badge-warning" :
+                                                        "bg-red-50 text-red-500"
                                                 }`}>
                                                 {{ paid: "💳 Lunas", pending: "⏳ Belum Bayar", refunded: "↩ Refund", cancelled: "✕ Batal", expired: "⌛ Expired" }[b.payment_status] || b.payment_status}
                                             </span>
@@ -162,6 +201,12 @@ export default function AdminBookingsPage() {
                                                     <button onClick={() => setCancelTarget(b)}
                                                         className="btn btn-sm text-xs bg-red-50 text-red-500 border-red-200 hover:bg-red-100">Tolak</button>
                                                 </>
+                                            )}
+                                            {b.status === "confirmed" && (
+                                                <button onClick={() => updateStatus(b.id, "completed")}
+                                                    className="btn btn-sm text-xs gap-1 text-white border-0" style={{ backgroundColor: '#05073C' }}>
+                                                    <CheckSquare size={12} /> Selesai
+                                                </button>
                                             )}
                                         </div>
                                     </td>
@@ -220,9 +265,9 @@ export default function AdminBookingsPage() {
                                     <div className="text-2xl font-bold text-accent">{formatPrice(detailBooking.total)}</div>
                                     {detailBooking.payment_status && (
                                         <span className={`badge text-xs mt-1 ${detailBooking.payment_status === "paid" ? "bg-emerald-50 text-emerald-600" :
-                                                detailBooking.payment_status === "refunded" ? "bg-purple-50 text-purple-600" :
-                                                    detailBooking.payment_status === "pending" ? "badge-warning" :
-                                                        "bg-red-50 text-red-500"
+                                            detailBooking.payment_status === "refunded" ? "bg-purple-50 text-purple-600" :
+                                                detailBooking.payment_status === "pending" ? "badge-warning" :
+                                                    "bg-red-50 text-red-500"
                                             }`}>
                                             {{ paid: "💳 Lunas", pending: "⏳ Belum Bayar", refunded: "↩ Refund", cancelled: "✕ Batal", expired: "⌛ Expired" }[detailBooking.payment_status] || detailBooking.payment_status}
                                         </span>

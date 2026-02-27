@@ -105,19 +105,26 @@ export default function LiveVisitorWidget() {
                     </div>
                     <div className="text-xs text-slate-500 mt-0.5">pengunjung aktif sekarang</div>
                 </div>
-                <div className="flex-1 h-12 relative">
+                <div className="flex-1 h-20 relative">
                     <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full">
                         <defs>
                             <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#FC4C4D" stopOpacity="0.3" />
-                                <stop offset="100%" stopColor="#FC4C4D" stopOpacity="0" />
+                                <stop offset="0%" stopColor="#FC4C4D" stopOpacity="0.35" />
+                                <stop offset="100%" stopColor="#FC4C4D" stopOpacity="0.02" />
                             </linearGradient>
                         </defs>
                         <path
                             d={`${sparkPath} L 100 100 L 0 100 Z`}
                             fill="url(#sparkGrad)"
                         />
-                        <path d={sparkPath} fill="none" stroke="#FC4C4D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d={sparkPath} fill="none" stroke="#FC4C4D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                        {sparkline.map((v, i) => {
+                            const x = (i / (sparkline.length - 1)) * 100;
+                            const y = 100 - ((v - minSpark) / (maxSpark - minSpark || 1)) * 90 - 5;
+                            return i === sparkline.length - 1 ? (
+                                <circle key={i} cx={x} cy={y} r="3" fill="#FC4C4D" stroke="white" strokeWidth="1.5" />
+                            ) : null;
+                        })}
                     </svg>
                 </div>
             </div>

@@ -41,8 +41,8 @@ export default function DestinationsPage() {
                         <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm mb-6">
                             <Globe size={14} /> Explore Nusantara
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            Destinasi <span className="text-blue">Wisata Indonesia</span>
+                        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+                            Destinasi <span className="text-accent">Wisata Indonesia</span>
                         </h1>
                         <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
                             Jelajahi keindahan 17.000 pulau Indonesia, dari sabang di ujung barat hingga merauke di ujung timur.
@@ -118,10 +118,10 @@ export default function DestinationsPage() {
                                                 alt={dest.name}
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                            <div className="absolute bottom-4 left-4 text-white">
-                                                <h3 className="text-xl font-bold">{dest.name}</h3>
-                                                <div className="flex items-center gap-1 text-white/80 text-sm">
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                                            <div className="absolute bottom-4 left-4 text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}>
+                                                <h3 className="text-xl font-bold text-white">{dest.name}</h3>
+                                                <div className="flex items-center gap-1 text-white/90 text-sm">
                                                     <MapPin size={12} /> {dest.country}
                                                 </div>
                                             </div>
@@ -134,7 +134,7 @@ export default function DestinationsPage() {
                                         <div className="p-4">
                                             <p className="text-slate-500 text-sm mb-3">{dest.description}</p>
                                             <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-1 text-sm text-blue font-semibold">
+                                                <div className="flex items-center gap-1 text-sm text-blue-700 font-semibold">
                                                     <Package size={14} /> {dest.tours} paket tersedia
                                                 </div>
                                                 <span className="text-accent text-sm font-semibold group-hover:gap-2 flex items-center gap-1 transition-all">
@@ -186,7 +186,7 @@ export default function DestinationsPage() {
                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
                         </div>
                         <div className="relative">
-                            <h2 className="text-3xl font-bold mb-3">Siap Menjelajahi Indonesia?</h2>
+                            <h2 className="text-3xl font-bold mb-3 text-white">Siap Menjelajahi Indonesia?</h2>
                             <p className="text-white/70 mb-8 max-w-lg mx-auto">
                                 Temukan paket wisata terbaik yang sesuai dengan impian dan budget Anda.
                             </p>

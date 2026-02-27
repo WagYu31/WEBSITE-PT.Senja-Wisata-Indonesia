@@ -11,8 +11,19 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=mysql://senja:senja123@db:3306/senja_wisata
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=senja
+      - DB_PASSWORD=senja123
+      - DB_NAME=senja_wisata
       - NEXTAUTH_SECRET=senja-wisata-secret-key-2025
       - NEXTAUTH_URL=http://localhost:3000
+      - MIDTRANS_SERVER_KEY=${MIDTRANS_SERVER_KEY:-your-server-key}
+      - MIDTRANS_CLIENT_KEY=${MIDTRANS_CLIENT_KEY:-your-client-key}
+      - MIDTRANS_IS_PRODUCTION=false
+      - NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=${MIDTRANS_CLIENT_KEY:-your-client-key}
+      - NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION=false
+      - NEXT_PUBLIC_BASE_URL=http://localhost:3000
     depends_on:
       db:
         condition: service_healthy

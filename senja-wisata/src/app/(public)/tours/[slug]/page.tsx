@@ -4,11 +4,18 @@ import { use, useState } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { motion } from "framer-motion";
-import { MapPin, Clock, Users, Star, CheckCircle, XCircle, Minus, Plus, Calendar, ChevronRight, Loader2 } from "lucide-react";
+import { MapPin, Clock, Users, Star, CheckCircle, XCircle, Minus, Plus, Calendar, ChevronRight, Loader2, X, User, CreditCard, Phone } from "lucide-react";
 import { tours } from "@/lib/data";
 import { formatPrice } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth";
 import { useRouter } from "next/navigation";
+
+interface PassengerData {
+    name: string;
+    idNumber: string;
+    birthDate: string;
+    type: "adult" | "child";
+}
 
 // Declare Midtrans Snap on window
 declare global {
@@ -42,12 +49,45 @@ export default function TourDetailPage({ params }: Props) {
     const [date, setDate] = useState("");
     const [isBooking, setIsBooking] = useState(false);
     const [bookingError, setBookingError] = useState("");
+    const [showPassengerForm, setShowPassengerForm] = useState(false);
+    const [passengers, setPassengers] = useState<PassengerData[]>([]);
+    const [contactPhone, setContactPhone] = useState("");
+    const [formErrors, setFormErrors] = useState<string[]>([]);
     const total = tour.price * (adults + children * 0.5);
 
-    const handleBook = async () => {
+    const openPassengerForm = () => {
         if (!isAuthenticated) { router.push("/login"); return; }
         if (!date) { setBookingError("Pilih tanggal berangkat terlebih dahulu"); return; }
         setBookingError("");
+        // Initialize passengers array
+        const pax: PassengerData[] = [];
+        for (let i = 0; i < adults; i++) pax.push({ name: "", idNumber: "", birthDate: "", type: "adult" });
+        for (let i = 0; i < children; i++) pax.push({ name: "", idNumber: "", birthDate: "", type: "child" });
+        setPassengers(pax);
+        setContactPhone("");
+        setFormErrors([]);
+        setShowPassengerForm(true);
+    };
+
+    const validatePassengerForm = (): boolean => {
+        const errors: string[] = [];
+        passengers.forEach((p, i) => {
+            if (!p.name.trim()) errors.push(`Nama peserta ${i + 1} wajib diisi`);
+            if (!p.idNumber.trim()) errors.push(`No. KTP/Paspor peserta ${i + 1} wajib diisi`);
+            if (!p.birthDate) errors.push(`Tanggal lahir peserta ${i + 1} wajib diisi`);
+        });
+        if (!contactPhone.trim()) errors.push("No. HP pemesan wajib diisi");
+        setFormErrors(errors);
+        return errors.length === 0;
+    };
+
+    const updatePassenger = (index: number, field: keyof PassengerData, value: string) => {
+        setPassengers(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
+    };
+
+    const handleBook = async () => {
+        if (!validatePassengerForm()) return;
+        setShowPassengerForm(false);
         setIsBooking(true);
 
         try {
@@ -62,6 +102,8 @@ export default function TourDetailPage({ params }: Props) {
                     userId: user?.id,
                     userName: user?.name,
                     userEmail: user?.email,
+                    contactPhone,
+                    passengers,
                 }),
             });
 
@@ -309,7 +351,7 @@ export default function TourDetailPage({ params }: Props) {
                                 </div>
                             </div>
 
-                            <button onClick={handleBook} disabled={isBooking}
+                            <button onClick={openPassengerForm} disabled={isBooking}
                                 className="btn btn-primary w-full text-base disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                                 {isBooking ? (
                                     <><Loader2 size={18} className="animate-spin" /> Memproses...</>
@@ -325,6 +367,149 @@ export default function TourDetailPage({ params }: Props) {
                     </aside>
                 </div>
             </div>
+
+            {/* ===== MODAL: Data Peserta ===== */}
+            {showPassengerForm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl"
+                    >
+                        {/* Header */}
+                        <div className="sticky top-0 bg-white border-b border-slate-100 p-4 sm:p-5 flex items-center justify-between z-10 rounded-t-2xl">
+                            <div>
+                                <h3 className="text-lg font-bold text-primary">Data Peserta</h3>
+                                <p className="text-xs text-slate-400">{tour.title} · {date}</p>
+                            </div>
+                            <button onClick={() => setShowPassengerForm(false)} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
+                                <X size={20} className="text-slate-400" />
+                            </button>
+                        </div>
+
+                        <div className="p-4 sm:p-5 space-y-5">
+                            {/* Validation errors */}
+                            {formErrors.length > 0 && (
+                                <div className="bg-red-50 border border-red-100 rounded-xl p-3">
+                                    <p className="text-xs font-semibold text-red-600 mb-1">Mohon lengkapi data berikut:</p>
+                                    <ul className="text-xs text-red-500 space-y-0.5">
+                                        {formErrors.slice(0, 3).map((e, i) => <li key={i}>• {e}</li>)}
+                                        {formErrors.length > 3 && <li>...dan {formErrors.length - 3} lainnya</li>}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {/* Contact Person */}
+                            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <Phone size={14} className="text-blue-500" />
+                                    <span className="text-sm font-bold text-blue-700">Data Pemesan</span>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Nama</label>
+                                        <input type="text" value={user?.name || ""} disabled className="form-input text-sm bg-slate-50 opacity-70" />
+                                    </div>
+                                    <div>
+                                        <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Email</label>
+                                        <input type="text" value={user?.email || ""} disabled className="form-input text-sm bg-slate-50 opacity-70" />
+                                    </div>
+                                    <div className="sm:col-span-2">
+                                        <label className="text-[11px] font-semibold text-slate-500 mb-1 block">No. HP / WhatsApp *</label>
+                                        <input
+                                            type="tel"
+                                            value={contactPhone}
+                                            onChange={e => setContactPhone(e.target.value)}
+                                            placeholder="+62 812-xxxx-xxxx"
+                                            className="form-input text-sm"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Per-passenger forms */}
+                            {passengers.map((pax, idx) => (
+                                <div key={idx} className="border border-slate-100 rounded-xl p-4">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ${pax.type === "adult" ? "bg-primary" : "bg-blue"
+                                            }`}>
+                                            {idx + 1}
+                                        </div>
+                                        <span className="text-sm font-bold text-primary">
+                                            Peserta {idx + 1}
+                                        </span>
+                                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${pax.type === "adult" ? "bg-primary/10 text-primary" : "bg-blue/10 text-blue"
+                                            }`}>
+                                            {pax.type === "adult" ? "Dewasa" : "Anak"}
+                                        </span>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Nama Lengkap *</label>
+                                            <div className="relative">
+                                                <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                <input
+                                                    type="text"
+                                                    value={pax.name}
+                                                    onChange={e => updatePassenger(idx, "name", e.target.value)}
+                                                    placeholder="Sesuai KTP/Paspor"
+                                                    className="form-input pl-9 text-sm"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="text-[11px] font-semibold text-slate-500 mb-1 block">No. KTP / Paspor *</label>
+                                                <div className="relative">
+                                                    <CreditCard size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                    <input
+                                                        type="text"
+                                                        value={pax.idNumber}
+                                                        onChange={e => updatePassenger(idx, "idNumber", e.target.value)}
+                                                        placeholder="3201xxxxxxxxxxxx"
+                                                        className="form-input pl-9 text-sm"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Tanggal Lahir *</label>
+                                                <div className="relative">
+                                                    <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                    <input
+                                                        type="date"
+                                                        value={pax.birthDate}
+                                                        onChange={e => updatePassenger(idx, "birthDate", e.target.value)}
+                                                        className="form-input pl-9 text-sm"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {/* Summary & Submit */}
+                            <div className="border-t border-slate-100 pt-4">
+                                <div className="flex justify-between text-sm mb-1">
+                                    <span className="text-slate-500">Total Peserta</span>
+                                    <span className="font-semibold text-primary">{adults + children} orang</span>
+                                </div>
+                                <div className="flex justify-between text-base font-bold mb-4">
+                                    <span className="text-primary">Total Bayar</span>
+                                    <span className="text-accent">{formatPrice(total)}</span>
+                                </div>
+                                <button
+                                    onClick={handleBook}
+                                    className="btn btn-primary w-full text-base flex items-center justify-center gap-2"
+                                >
+                                    Lanjut ke Pembayaran
+                                </button>
+                                <p className="text-[10px] text-slate-400 text-center mt-2">Dengan melanjutkan, Anda menyetujui syarat dan ketentuan yang berlaku</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 }

@@ -3,10 +3,12 @@
 import { useAuthStore } from "@/store/auth";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import {
     BookOpen, TrendingUp, Users, Package, Clock,
     Star, AlertCircle, ChevronRight, CheckCircle,
-    ArrowUpRight, ArrowDownRight, Plus, Eye
+    ArrowUpRight, ArrowDownRight, Plus, Eye,
+    Calendar, MessageSquare, Target, Heart, Repeat2, Pencil, Check
 } from "lucide-react";
 import LiveVisitorWidget from "@/components/admin/LiveVisitorWidget";
 
@@ -85,6 +87,40 @@ const statusConfig: Record<string, { label: string; cls: string }> = {
 
 export default function AdminDashboard() {
     const { user } = useAuthStore();
+    const CURRENT_REVENUE = 284; // in Jt
+    const [revenueTarget, setRevenueTarget] = useState(350);
+    const [editingTarget, setEditingTarget] = useState(false);
+    const [tempTarget, setTempTarget] = useState("");
+
+    useEffect(() => {
+        const saved = localStorage.getItem("sw-revenue-target");
+        if (saved) setRevenueTarget(Number(saved));
+    }, []);
+
+    const saveTarget = () => {
+        const val = parseInt(tempTarget);
+        if (val && val > 0) {
+            setRevenueTarget(val);
+            localStorage.setItem("sw-revenue-target", String(val));
+        }
+        setEditingTarget(false);
+    };
+
+    const pct = Math.min(100, Math.round((CURRENT_REVENUE / revenueTarget) * 100));
+    const remaining = Math.max(0, revenueTarget - CURRENT_REVENUE);
+
+    // Fetch latest reviews
+    const [latestReviews, setLatestReviews] = useState<Array<{ user_name: string; tour_title: string; rating: number; comment: string }>>([]);
+    useEffect(() => {
+        fetch("/api/reviews?latest=3")
+            .then(r => r.json())
+            .then(data => {
+                if (data.reviews && data.reviews.length > 0) {
+                    setLatestReviews(data.reviews);
+                }
+            })
+            .catch(() => { });
+    }, []);
 
     return (
         <div className="space-y-6">
@@ -97,6 +133,22 @@ export default function AdminDashboard() {
                 <Link href="/admin/tours" className="btn btn-primary btn-sm gap-2 self-start sm:self-auto">
                     <Plus size={15} /> Tour Baru
                 </Link>
+            </div>
+
+            {/* Aksi Cepat - Compact Horizontal Bar */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                <span className="text-xs font-semibold text-slate-400 shrink-0">Aksi Cepat:</span>
+                {[
+                    { label: "Tambah Tour", href: "/admin/tours", icon: Plus, color: "text-blue bg-blue/10 border-blue/20" },
+                    { label: "Kelola Booking", href: "/admin/bookings", icon: BookOpen, color: "text-amber-600 bg-amber-50 border-amber-200" },
+                    { label: "Manajemen User", href: "/admin/users", icon: Users, color: "text-violet-600 bg-violet-50 border-violet-200" },
+                    { label: "Lihat Laporan", href: "/owner/reports", icon: TrendingUp, color: "text-emerald-600 bg-emerald-50 border-emerald-200" },
+                ].map((a) => (
+                    <Link key={a.href} href={a.href} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all hover:shadow-sm shrink-0 ${a.color}`}>
+                        <a.icon size={13} />
+                        {a.label}
+                    </Link>
+                ))}
             </div>
 
             {/* Alerts */}
@@ -137,11 +189,10 @@ export default function AdminDashboard() {
                 ))}
             </div>
 
-            {/* Revenue Chart + Live Visitors + Quick Actions */}
+            {/* Revenue Chart + Live Visitors */}
             <div className="grid lg:grid-cols-3 gap-5">
-                {/* Left: Revenue Chart + Quick Actions stacked */}
+                {/* Left: Revenue Chart + Target + Ulasan stacked */}
                 <div className="lg:col-span-2 flex flex-col gap-5">
-                    {/* Revenue Chart */}
                     <div className="card p-5">
                         <div className="flex items-center justify-between mb-5">
                             <div>
@@ -152,9 +203,9 @@ export default function AdminDashboard() {
                                 <ArrowUpRight size={12} /> +8% vs bulan lalu
                             </span>
                         </div>
-                        <div className="flex items-end gap-2 mt-2" style={{ height: "140px" }}>
+                        <div className="flex items-end gap-2 mt-2" style={{ height: "200px" }}>
                             {revenueData.map((d, i) => {
-                                const barHeight = Math.round((d.value / maxRevenue) * 120);
+                                const barHeight = Math.round((d.value / maxRevenue) * 180);
                                 const isLast = i === revenueData.length - 1;
                                 return (
                                     <div key={d.month} className="flex-1 flex flex-col items-center gap-1">
@@ -176,24 +227,145 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    {/* Quick Actions */}
-                    <div className="card p-5 flex-1">
-                        <h3 className="font-bold text-primary mb-4">Aksi Cepat</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            {[
-                                { label: "Tambah Tour Baru", href: "/admin/tours", icon: Plus, color: "text-blue bg-blue/10" },
-                                { label: "Kelola Booking", href: "/admin/bookings", icon: BookOpen, color: "text-amber-600 bg-amber-50" },
-                                { label: "Manajemen User", href: "/admin/users", icon: Users, color: "text-violet-600 bg-violet-50" },
-                                { label: "Lihat Laporan", href: "/owner/reports", icon: TrendingUp, color: "text-emerald-600 bg-emerald-50" },
-                            ].map((a) => (
-                                <Link key={a.href} href={a.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group border border-slate-100">
-                                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${a.color}`}>
-                                        <a.icon size={16} />
+                    {/* Target Revenue + Ulasan Terbaru side by side under chart */}
+                    <div className="grid sm:grid-cols-2 gap-5">
+                        {/* Target Revenue */}
+                        <div className="card p-5">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                    <Target size={16} className="text-emerald-600" />
+                                </div>
+                                <h4 className="font-bold text-primary text-sm flex-1">Target Revenue</h4>
+                                <button
+                                    onClick={() => { setTempTarget(String(revenueTarget)); setEditingTarget(!editingTarget); }}
+                                    className="p-1 rounded-md hover:bg-slate-100 text-slate-400 hover:text-primary transition-colors"
+                                    title="Edit target"
+                                >
+                                    <Pencil size={12} />
+                                </button>
+                            </div>
+                            {editingTarget && (
+                                <div className="flex items-center gap-2 mb-3 bg-slate-50 rounded-lg p-2">
+                                    <span className="text-[11px] text-slate-400 shrink-0">Target:</span>
+                                    <div className="flex items-center gap-1 flex-1">
+                                        <span className="text-[11px] text-slate-500">Rp</span>
+                                        <input
+                                            type="number"
+                                            value={tempTarget}
+                                            onChange={e => setTempTarget(e.target.value)}
+                                            className="w-full text-sm font-semibold text-primary bg-white border border-slate-200 rounded-md px-2 py-1"
+                                            placeholder="350"
+                                            min={1}
+                                        />
+                                        <span className="text-[11px] text-slate-500">Jt</span>
                                     </div>
-                                    <span className="text-sm font-medium text-slate-600 group-hover:text-primary leading-tight">{a.label}</span>
-                                    <ChevronRight size={14} className="ml-auto text-slate-300 group-hover:text-primary" />
-                                </Link>
-                            ))}
+                                    <button onClick={saveTarget} className="p-1.5 bg-emerald-500 text-white rounded-md hover:bg-emerald-600">
+                                        <Check size={12} />
+                                    </button>
+                                </div>
+                            )}
+                            <div className="text-2xl font-bold text-primary mb-0.5">{pct}%</div>
+                            <p className="text-[11px] text-slate-400 mb-3">Rp {CURRENT_REVENUE} Jt / Rp {revenueTarget} Jt</p>
+                            <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-1000" style={{ width: `${pct}%` }} />
+                            </div>
+                            <div className="flex justify-between mt-2 text-[10px] text-slate-400">
+                                <span>Tercapai: <strong className="text-emerald-600">Rp {CURRENT_REVENUE} Jt</strong></span>
+                                <span>Sisa: <strong className="text-slate-600">Rp {remaining} Jt</strong></span>
+                            </div>
+                        </div>
+
+                        {/* Ulasan Terbaru */}
+                        <div className="card p-5">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                                    <MessageSquare size={16} className="text-amber-600" />
+                                </div>
+                                <h4 className="font-bold text-primary text-sm">Ulasan Terbaru</h4>
+                            </div>
+                            <div className="space-y-2.5">
+                                {(latestReviews.length > 0 ? latestReviews : [
+                                    { user_name: "Belum ada", tour_title: "-", rating: 0, comment: "Belum ada ulasan" },
+                                ]).map((r, i) => (
+                                    <div key={i} className="flex gap-2">
+                                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
+                                            {r.user_name.charAt(0)}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-xs font-semibold text-primary truncate">{r.user_name}</span>
+                                                <div className="flex gap-px">
+                                                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={8} className={s <= r.rating ? "fill-amber-400 text-amber-400" : "text-slate-200"} />)}
+                                                </div>
+                                            </div>
+                                            <p className="text-[10px] text-slate-400 truncate">{r.tour_title} — &quot;{r.comment || 'Tanpa komentar'}&quot;</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Tour Mendatang */}
+                        <div className="card p-5">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-8 h-8 rounded-lg bg-blue/10 flex items-center justify-center">
+                                    <Calendar size={16} className="text-blue" />
+                                </div>
+                                <h4 className="font-bold text-primary text-sm">Tour Mendatang</h4>
+                            </div>
+                            <div className="space-y-2">
+                                {[
+                                    { tour: "Raja Ampat Paradise", date: "28 Feb", pax: 8, color: "bg-blue" },
+                                    { tour: "Bali Complete Exp.", date: "02 Mar", pax: 12, color: "bg-emerald-500" },
+                                    { tour: "Bromo Sunrise", date: "05 Mar", pax: 6, color: "bg-amber-500" },
+                                ].map((t, i) => (
+                                    <div key={i} className="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+                                        <div className={`w-1 h-8 rounded-full shrink-0 ${t.color}`} />
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-xs font-semibold text-primary truncate">{t.tour}</p>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <span className="text-[10px] text-slate-400 flex items-center gap-0.5">
+                                                    <Calendar size={8} /> {t.date}
+                                                </span>
+                                                <span className="text-[10px] text-slate-400 flex items-center gap-0.5">
+                                                    <Users size={8} /> {t.pax} pax
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Kepuasan Pelanggan */}
+                        <div className="card p-5">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center">
+                                    <Heart size={16} className="text-rose-500" />
+                                </div>
+                                <h4 className="font-bold text-primary text-sm">Kepuasan Pelanggan</h4>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="text-center py-1">
+                                    <div className="flex items-center justify-center gap-1 mb-0.5">
+                                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} className={s <= 4 ? "fill-amber-400 text-amber-400" : "fill-amber-400/30 text-amber-400/30"} />)}
+                                    </div>
+                                    <div className="text-2xl font-bold text-primary">4.8</div>
+                                    <p className="text-[10px] text-slate-400">dari 342 ulasan</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="bg-slate-50 rounded-lg p-2 text-center">
+                                        <Repeat2 size={14} className="mx-auto text-violet-500 mb-0.5" />
+                                        <div className="text-sm font-bold text-primary">32%</div>
+                                        <p className="text-[9px] text-slate-400">Repeat Customer</p>
+                                    </div>
+                                    <div className="bg-slate-50 rounded-lg p-2 text-center">
+                                        <TrendingUp size={14} className="mx-auto text-emerald-500 mb-0.5" />
+                                        <div className="text-sm font-bold text-primary">87</div>
+                                        <p className="text-[9px] text-slate-400">NPS Score</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
