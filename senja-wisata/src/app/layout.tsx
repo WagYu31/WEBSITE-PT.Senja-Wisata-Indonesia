@@ -29,6 +29,24 @@ export const metadata: Metadata = {
     type: "website",
     locale: "id_ID",
     siteName: "Senja Wisata Indonesia",
+    title: "PT. Senja Wisata Indonesia — Liburan Impian Anda",
+    description:
+      "Temukan paket wisata terbaik Indonesia. Dari Raja Ampat hingga Bali — kami menghadirkan pengalaman perjalanan tak terlupakan dengan harga terbaik.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1024,
+        height: 1024,
+        alt: "Senja Wisata Indonesia — Liburan Impian Anda",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PT. Senja Wisata Indonesia — Liburan Impian Anda",
+    description:
+      "Temukan paket wisata terbaik Indonesia. Dari Raja Ampat hingga Bali — kami menghadirkan pengalaman perjalanan tak terlupakan.",
+    images: ["/og-image.png"],
   },
 };
 

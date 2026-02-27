@@ -155,9 +155,9 @@ CREATE TABLE IF NOT EXISTS wishlists (
 
 -- Demo users (password: hashed 'owner123', 'admin123', 'user123')
 INSERT INTO users (name, email, password, role) VALUES
-('Senja Owner', 'owner@senja.com', '$2b$10$rOxDFhAvt5eHHxoYU6r8L.AJpxYMFmJNg0LJmAMJtR7iBXW39kQQm', 'owner'),
-('Admin Senja', 'admin@senja.com', '$2b$10$rOxDFhAvt5eHHxoYU6r8L.AJpxYMFmJNg0LJmAMJtR7iBXW39kQQm', 'admin'),
-('Budi Santoso', 'user@senja.com', '$2b$10$rOxDFhAvt5eHHxoYU6r8L.AJpxYMFmJNg0LJmAMJtR7iBXW39kQQm', 'user');
+('Senja Owner', 'owner@senja.com', '$2b$10$xGNPiSRo8GZFvAXz7XRvguJQdapwFOigFNKNt4iGeahQtnQIhlCwm', 'owner'),
+('Admin Senja', 'admin@senja.com', '$2b$10$x1vQZDERD7d7EPDqmXQrhezQWlkV0HvlgK1le8xsL/laUWP9hac5i', 'admin'),
+('Budi Santoso', 'user@senja.com', '$2b$10$D967JPab4jc1KRRSduM2z.aWOjB/iWHuAhtvov.PEiyN71m2SsEQW', 'user');
 
 -- Destinations
 INSERT INTO destinations (name, island, description, image) VALUES
