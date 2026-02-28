@@ -20,6 +20,8 @@ export default function ProfilePage() {
     });
 
     const [pwForm, setPwForm] = useState({ old: "", new: "", confirm: "" });
+    const [pwLoading, setPwLoading] = useState(false);
+    const [pwMsg, setPwMsg] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
     const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -122,6 +124,12 @@ export default function ProfilePage() {
             <div className="card p-6 space-y-5">
                 <h3 className="font-bold text-primary text-lg border-b border-slate-100 pb-3">Ganti Password</h3>
 
+                {pwMsg && (
+                    <div className={`text-sm px-4 py-2 rounded-lg ${pwMsg.type === "success" ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>
+                        {pwMsg.msg}
+                    </div>
+                )}
+
                 <div>
                     <label className="form-label">Password Lama</label>
                     <div className="relative">
@@ -175,10 +183,36 @@ export default function ProfilePage() {
 
                 <button
                     type="button"
-                    disabled={!pwForm.old || !pwForm.new || pwForm.new !== pwForm.confirm}
+                    disabled={!pwForm.old || !pwForm.new || pwForm.new !== pwForm.confirm || pwLoading}
+                    onClick={async () => {
+                        setPwLoading(true);
+                        setPwMsg(null);
+                        try {
+                            const res = await fetch("/api/auth/update-password", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    userId: user?.id,
+                                    oldPassword: pwForm.old,
+                                    newPassword: pwForm.new,
+                                }),
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success) {
+                                setPwMsg({ msg: "Password berhasil diperbarui! ✓", type: "success" });
+                                setPwForm({ old: "", new: "", confirm: "" });
+                            } else {
+                                setPwMsg({ msg: data.error || "Gagal memperbarui password", type: "error" });
+                            }
+                        } catch {
+                            setPwMsg({ msg: "Terjadi kesalahan. Coba lagi.", type: "error" });
+                        } finally {
+                            setPwLoading(false);
+                        }
+                    }}
                     className="btn btn-outline disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Update Password
+                    {pwLoading ? "Memperbarui..." : "Update Password"}
                 </button>
             </div>
 
