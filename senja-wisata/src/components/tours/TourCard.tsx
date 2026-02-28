@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Heart, MapPin, Clock, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Tour } from "@/types";
@@ -23,6 +24,7 @@ const badgeColors: Record<string, string> = {
 };
 
 export default function TourCard({ tour, index = 0 }: TourCardProps) {
+    const router = useRouter();
     const { user } = useAuthStore();
     const toggle = useWishlistStore((s) => s.toggle);
     const isWishlisted = useWishlistStore((s) => s.has(tour.id));
@@ -31,6 +33,16 @@ export default function TourCard({ tour, index = 0 }: TourCardProps) {
     useEffect(() => {
         if (user?.id) syncFromDB(user.id);
     }, [user?.id, syncFromDB]);
+
+    const handleWishlistClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!user) {
+            router.push("/login");
+            return;
+        }
+        toggle(tour.id, user.id);
+    };
 
     return (
         <motion.div
@@ -67,19 +79,16 @@ export default function TourCard({ tour, index = 0 }: TourCardProps) {
 
                     {/* Wishlist */}
                     <button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            toggle(tour.id, user?.id);
-                        }}
+                        onClick={handleWishlistClick}
                         className={cn(
                             "absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200",
-                            isWishlisted
+                            user && isWishlisted
                                 ? "bg-accent text-white"
                                 : "bg-white/80 text-slate-500 hover:bg-accent hover:text-white"
                         )}
+                        title={user ? "Tambah ke Wishlist" : "Login untuk Wishlist"}
                     >
-                        <Heart size={15} className={cn(isWishlisted && "fill-white")} />
+                        <Heart size={15} className={cn(user && isWishlisted && "fill-white")} />
                     </button>
 
                     {/* Category & Duration */}
