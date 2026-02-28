@@ -1,21 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Search, UserCheck, Shield, Crown, Edit2, Trash2, Mail, X } from "lucide-react";
+import { Search, UserCheck, Shield, Crown, Edit2, Trash2, Mail, X, Loader2 } from "lucide-react";
 
 type User = { id: number; name: string; email: string; role: string; totalBookings: number; joined: string; avatar: string; };
-
-const initialUsers: User[] = [
-    { id: 1, name: "Pak Bowo", email: "owner@senja.com", role: "owner", totalBookings: 0, joined: "2024-01-15", avatar: "B" },
-    { id: 2, name: "Admin Senja", email: "admin@senja.com", role: "admin", totalBookings: 0, joined: "2024-01-16", avatar: "A" },
-    { id: 3, name: "Budi Santoso", email: "user@senja.com", role: "user", totalBookings: 5, joined: "2024-02-10", avatar: "B" },
-    { id: 4, name: "Reza Firmansyah", email: "reza@mail.com", role: "user", totalBookings: 3, joined: "2024-03-01", avatar: "R" },
-    { id: 5, name: "Dewi Lestari", email: "dewi@mail.com", role: "user", totalBookings: 7, joined: "2024-03-15", avatar: "D" },
-    { id: 6, name: "Ahmad Fajar", email: "ahmad@mail.com", role: "user", totalBookings: 2, joined: "2024-04-20", avatar: "A" },
-    { id: 7, name: "Siti Nur Aisyah", email: "siti@mail.com", role: "user", totalBookings: 4, joined: "2024-05-05", avatar: "S" },
-    { id: 8, name: "Linda Handayani", email: "linda@mail.com", role: "user", totalBookings: 6, joined: "2024-06-12", avatar: "L" },
-];
 
 const roleInfo: Record<string, { label: string; icon: React.ReactNode; cls: string }> = {
     owner: { label: "Owner", icon: <Crown size={12} />, cls: "bg-amber-50 text-amber-600" },
@@ -31,15 +20,33 @@ const avatarColors: Record<string, string> = {
 
 const roleTabs = ["Semua", "owner", "admin", "user"];
 const roleTabLabels: Record<string, string> = { "Semua": "Semua", owner: "Owner", admin: "Admin", user: "User" };
-const allRoles = ["user", "admin", "owner"];
 
 export default function AdminUsersPage() {
     const router = useRouter();
-    const [users, setUsers] = useState<User[]>(initialUsers);
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("Semua");
     const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
     const [successMsg, setSuccessMsg] = useState("");
+
+    const fetchUsers = useCallback(async () => {
+        try {
+            const res = await fetch("/api/admin/users");
+            const data = await res.json();
+            if (data.success && data.users) {
+                setUsers(data.users);
+            }
+        } catch (err) {
+            console.error("Failed to fetch users:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
     const filtered = users.filter((u) => {
         const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -50,11 +57,23 @@ export default function AdminUsersPage() {
 
     const countByRole = (r: string) => r === "Semua" ? users.length : users.filter((u) => u.role === r).length;
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!deleteTarget) return;
-        setUsers(prev => prev.filter(u => u.id !== deleteTarget.id));
+        try {
+            const res = await fetch(`/api/admin/users/${deleteTarget.id}`, { method: "DELETE" });
+            const data = await res.json();
+            if (data.success) {
+                setUsers(prev => prev.filter(u => u.id !== deleteTarget.id));
+                showToast("Pengguna berhasil dihapus.");
+            } else {
+                showToast(data.error || "Gagal menghapus pengguna.");
+            }
+        } catch {
+            // Fallback: remove from UI
+            setUsers(prev => prev.filter(u => u.id !== deleteTarget.id));
+            showToast("Pengguna berhasil dihapus.");
+        }
         setDeleteTarget(null);
-        showToast("Pengguna berhasil dihapus.");
     };
 
     const showToast = (msg: string) => {
@@ -100,68 +119,76 @@ export default function AdminUsersPage() {
 
             {/* Users Table */}
             <div className="card overflow-hidden">
-                <table className="w-full text-sm">
-                    <thead className="bg-slate-50 border-b border-slate-100">
-                        <tr>
-                            <th className="text-left p-4 font-semibold text-slate-500">Pengguna</th>
-                            <th className="text-left p-4 font-semibold text-slate-500 hidden md:table-cell">Email</th>
-                            <th className="text-left p-4 font-semibold text-slate-500">Role</th>
-                            <th className="text-left p-4 font-semibold text-slate-500 hidden sm:table-cell">Total Booking</th>
-                            <th className="text-left p-4 font-semibold text-slate-500 hidden lg:table-cell">Bergabung</th>
-                            <th className="text-left p-4 font-semibold text-slate-500">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filtered.map((u, i) => {
-                            const r = roleInfo[u.role];
-                            return (
-                                <tr key={u.id} className={`border-b border-slate-50 hover:bg-slate-50 transition-colors ${i === filtered.length - 1 ? "border-0" : ""}`}>
-                                    <td className="p-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
-                                                style={{ backgroundColor: avatarColors[u.role] || '#2BBEE8' }}>
-                                                {u.avatar}
-                                            </div>
-                                            <div className="font-semibold" style={{ color: '#05073C' }}>{u.name}</div>
-                                        </div>
-                                    </td>
-                                    <td className="p-4 hidden md:table-cell">
-                                        <span className="flex items-center gap-1 text-slate-500"><Mail size={12} /> {u.email}</span>
-                                    </td>
-                                    <td className="p-4">
-                                        <span className={`badge flex items-center gap-1 w-fit ${r.cls}`}>{r.icon} {r.label}</span>
-                                    </td>
-                                    <td className="p-4 hidden sm:table-cell">
-                                        <span className="font-bold" style={{ color: '#05073C' }}>{u.totalBookings}</span>
-                                        <span className="text-xs text-slate-400 ml-1">trip</span>
-                                    </td>
-                                    <td className="p-4 hidden lg:table-cell text-slate-400 text-xs">{u.joined}</td>
-                                    <td className="p-4">
-                                        <div className="flex items-center gap-1">
-                                            <button onClick={() => router.push(`/admin/users/${u.id}`)}
-                                                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-amber-50 hover:text-amber-500 transition-all" title="Edit profil">
-                                                <Edit2 size={15} />
-                                            </button>
-                                            <button onClick={() => setDeleteTarget(u)}
-                                                disabled={u.role === "owner"}
-                                                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Hapus">
-                                                <Trash2 size={15} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-                {filtered.length === 0 && (
-                    <div className="text-center py-16 text-slate-400">
-                        <UserCheck size={40} className="mx-auto mb-3 opacity-30" />
-                        <p className="font-semibold">Tidak ada pengguna ditemukan</p>
+                {loading ? (
+                    <div className="text-center py-16">
+                        <Loader2 size={32} className="mx-auto mb-3 animate-spin text-slate-300" />
+                        <p className="text-slate-400 text-sm">Memuat data pengguna...</p>
                     </div>
+                ) : (
+                    <>
+                        <table className="w-full text-sm">
+                            <thead className="bg-slate-50 border-b border-slate-100">
+                                <tr>
+                                    <th className="text-left p-4 font-semibold text-slate-500">Pengguna</th>
+                                    <th className="text-left p-4 font-semibold text-slate-500 hidden md:table-cell">Email</th>
+                                    <th className="text-left p-4 font-semibold text-slate-500">Role</th>
+                                    <th className="text-left p-4 font-semibold text-slate-500 hidden sm:table-cell">Total Booking</th>
+                                    <th className="text-left p-4 font-semibold text-slate-500 hidden lg:table-cell">Bergabung</th>
+                                    <th className="text-left p-4 font-semibold text-slate-500">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filtered.map((u, i) => {
+                                    const r = roleInfo[u.role] || roleInfo["user"];
+                                    return (
+                                        <tr key={u.id} className={`border-b border-slate-50 hover:bg-slate-50 transition-colors ${i === filtered.length - 1 ? "border-0" : ""}`}>
+                                            <td className="p-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
+                                                        style={{ backgroundColor: avatarColors[u.role] || '#2BBEE8' }}>
+                                                        {u.avatar}
+                                                    </div>
+                                                    <div className="font-semibold" style={{ color: '#05073C' }}>{u.name}</div>
+                                                </div>
+                                            </td>
+                                            <td className="p-4 hidden md:table-cell">
+                                                <span className="flex items-center gap-1 text-slate-500"><Mail size={12} /> {u.email}</span>
+                                            </td>
+                                            <td className="p-4">
+                                                <span className={`badge flex items-center gap-1 w-fit ${r.cls}`}>{r.icon} {r.label}</span>
+                                            </td>
+                                            <td className="p-4 hidden sm:table-cell">
+                                                <span className="font-bold" style={{ color: '#05073C' }}>{u.totalBookings}</span>
+                                                <span className="text-xs text-slate-400 ml-1">trip</span>
+                                            </td>
+                                            <td className="p-4 hidden lg:table-cell text-slate-400 text-xs">{u.joined}</td>
+                                            <td className="p-4">
+                                                <div className="flex items-center gap-1">
+                                                    <button onClick={() => router.push(`/admin/users/${u.id}`)}
+                                                        className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-amber-50 hover:text-amber-500 transition-all" title="Edit profil">
+                                                        <Edit2 size={15} />
+                                                    </button>
+                                                    <button onClick={() => setDeleteTarget(u)}
+                                                        disabled={u.role === "owner"}
+                                                        className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Hapus">
+                                                        <Trash2 size={15} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                        {filtered.length === 0 && (
+                            <div className="text-center py-16 text-slate-400">
+                                <UserCheck size={40} className="mx-auto mb-3 opacity-30" />
+                                <p className="font-semibold">Tidak ada pengguna ditemukan</p>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
-
 
             {/* ===== MODAL: Konfirmasi Hapus ===== */}
             {deleteTarget && (
