@@ -59,6 +59,30 @@ export async function POST(req: NextRequest) {
             }
             tourTitle = staticTour.title;
             tourPrice = staticTour.price;
+
+            // Auto-insert tour into DB so foreign key works
+            try {
+                await db.query(
+                    `INSERT IGNORE INTO tours (id, title, slug, description, price, duration, location, category, rating, review_count, max_group, is_active)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)`,
+                    [
+                        staticTour.id,
+                        staticTour.title,
+                        staticTour.slug || staticTour.title.toLowerCase().replace(/\s+/g, "-"),
+                        staticTour.description || "",
+                        staticTour.price,
+                        staticTour.duration || "3 Days",
+                        staticTour.location || "",
+                        staticTour.category || "adventure",
+                        staticTour.rating || 4.5,
+                        staticTour.reviews || 0,
+                        20,
+                    ]
+                );
+                console.log(`[Booking] Auto-inserted tour ${staticTour.id} into DB`);
+            } catch (tourInsertErr) {
+                console.error("[Booking] Tour auto-insert failed:", tourInsertErr);
+            }
         }
 
         const totalGuests = Number(adults) + Number(children || 0);
