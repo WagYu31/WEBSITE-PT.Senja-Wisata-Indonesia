@@ -29,6 +29,14 @@ export async function GET() {
         results.bookings = { ok: false, error: String(err) };
     }
 
+    // Test 3b: Bookings table structure
+    try {
+        const [cols] = await db.query<RowDataPacket[]>("DESCRIBE bookings");
+        results.bookingsStructure = cols;
+    } catch (err) {
+        results.bookingsStructure = { error: String(err) };
+    }
+
     // Test 4: List bookings
     try {
         const [rows] = await db.query<RowDataPacket[]>(

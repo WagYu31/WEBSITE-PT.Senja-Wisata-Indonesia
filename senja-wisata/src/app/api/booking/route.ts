@@ -110,8 +110,8 @@ export async function POST(req: NextRequest) {
             await db.query(
                 `INSERT INTO bookings 
                  (booking_code, user_id, tour_id, tour_date, guests, adults, children, total_price, 
-                  status, payment_status, midtrans_order_id, snap_token) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)`,
+                  status, special_request, payment_method, payment_status, midtrans_order_id, midtrans_transaction_id, snap_token) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', '', 'midtrans', 'pending', ?, '', ?)`,
                 [bookingCode, userId, tourId, tourDate, totalGuests, adults, children || 0, totalPrice, orderId, snapResponse.token]
             );
             dbInsertOk = true;
