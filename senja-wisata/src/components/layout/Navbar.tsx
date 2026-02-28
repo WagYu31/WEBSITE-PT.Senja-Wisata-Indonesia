@@ -116,7 +116,7 @@ export default function Navbar() {
                             )}
                         >
                             <Heart size={20} />
-                            {wishlistItems.length > 0 && (
+                            {isAuthenticated && wishlistItems.length > 0 && (
                                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                                     {wishlistItems.length}
                                 </span>
