@@ -7,14 +7,17 @@ import { useAuthStore } from "@/store/auth";
 import { Package, Heart, Star, Calendar, Clock, MapPin, CheckCircle, Loader2 } from "lucide-react";
 
 type Booking = {
-    id: string;
-    tourTitle: string;
-    date: string;
-    duration: string;
+    id: number;
+    booking_code: string;
+    tour_id: number;
+    tour_title?: string;
+    tour_location?: string;
+    tour_date: string;
     guests: number;
-    total: number;
+    total_price: number;
     status: string;
-    destination: string;
+    payment_status: string;
+    created_at: string;
 };
 
 const statusStyle: Record<string, string> = {
@@ -34,17 +37,15 @@ const statusLabel: Record<string, string> = {
 export default function UserDashboard() {
     const { user } = useAuthStore();
     const [bookings, setBookings] = useState<Booking[]>([]);
-    const [stats, setStats] = useState({ totalTrips: 0, upcomingTrips: 0 });
     const [loading, setLoading] = useState(true);
 
     const fetchData = useCallback(async () => {
-        if (!user?.id) return;
+        if (!user?.id) { setLoading(false); return; }
         try {
-            const res = await fetch(`/api/user/bookings?userId=${user.id}`);
-            const data = await res.json();
-            if (data.success) {
+            const res = await fetch(`/api/booking?userId=${user.id}`);
+            if (res.ok) {
+                const data = await res.json();
                 setBookings(data.bookings || []);
-                setStats(data.stats || { totalTrips: 0, upcomingTrips: 0 });
             }
         } catch (err) {
             console.error("Failed to fetch bookings:", err);
@@ -57,15 +58,16 @@ export default function UserDashboard() {
         fetchData();
     }, [fetchData]);
 
-    const upcomingBooking = bookings.find(
-        (b) => b.status === "confirmed" && new Date(b.date) > new Date()
-    ) || bookings[0];
+    const upcomingBookings = bookings.filter(
+        (b) => b.status === "confirmed" && new Date(b.tour_date) > new Date()
+    );
+    const upcomingBooking = upcomingBookings[0] || null;
 
     const statItems = [
-        { label: "Total Trip", value: String(stats.totalTrips), icon: Package, color: "text-blue bg-blue/10" },
+        { label: "Total Trip", value: String(bookings.length), icon: Package, color: "text-blue bg-blue/10" },
         { label: "Wishlist", value: "0", icon: Heart, color: "text-accent bg-accent/10" },
         { label: "Ulasan Dibuat", value: "0", icon: Star, color: "text-amber-500 bg-amber-50" },
-        { label: "Trip Mendatang", value: String(stats.upcomingTrips), icon: Calendar, color: "text-emerald-600 bg-emerald-50" },
+        { label: "Trip Mendatang", value: String(upcomingBookings.length), icon: Calendar, color: "text-emerald-600 bg-emerald-50" },
     ];
 
     return (
@@ -114,19 +116,18 @@ export default function UserDashboard() {
                             <div className={`badge ${statusStyle[upcomingBooking.status] || statusStyle.pending} mb-2`}>
                                 <CheckCircle size={12} /> {statusLabel[upcomingBooking.status] || upcomingBooking.status}
                             </div>
-                            <h4 className="font-bold text-primary text-lg mb-1">{upcomingBooking.tourTitle}</h4>
+                            <h4 className="font-bold text-primary text-lg mb-1">{upcomingBooking.tour_title || `Tour #${upcomingBooking.tour_id}`}</h4>
                             <div className="flex flex-wrap gap-3 text-sm text-slate-500 mb-3">
-                                <span className="flex items-center gap-1"><Calendar size={13} /> {upcomingBooking.date}</span>
-                                <span className="flex items-center gap-1"><Clock size={13} /> {upcomingBooking.duration}</span>
-                                {upcomingBooking.destination && (
-                                    <span className="flex items-center gap-1"><MapPin size={13} /> {upcomingBooking.destination}</span>
+                                <span className="flex items-center gap-1"><Calendar size={13} /> {upcomingBooking.tour_date}</span>
+                                {upcomingBooking.tour_location && (
+                                    <span className="flex items-center gap-1"><MapPin size={13} /> {upcomingBooking.tour_location}</span>
                                 )}
                             </div>
-                            <div className="font-bold text-accent">{formatPrice(upcomingBooking.total)}</div>
+                            <div className="font-bold text-accent">{formatPrice(upcomingBooking.total_price)}</div>
                         </div>
                         <div className="sm:text-right">
                             <div className="text-xs text-slate-400 mb-1">Booking ID</div>
-                            <div className="font-mono font-bold text-sm text-primary">{upcomingBooking.id}</div>
+                            <div className="font-mono font-bold text-sm text-primary">{upcomingBooking.booking_code}</div>
                             <Link href="/dashboard/trips" className="btn btn-outline btn-sm mt-3 text-xs">Lihat Detail</Link>
                         </div>
                     </div>
@@ -159,13 +160,13 @@ export default function UserDashboard() {
                             </thead>
                             <tbody>
                                 {bookings.map((b, i) => (
-                                    <tr key={b.id} className={`border-b border-slate-50 hover:bg-slate-50 transition-colors ${i === bookings.length - 1 ? "border-0" : ""}`}>
+                                    <tr key={b.booking_code} className={`border-b border-slate-50 hover:bg-slate-50 transition-colors ${i === bookings.length - 1 ? "border-0" : ""}`}>
                                         <td className="p-4">
-                                            <div className="font-semibold text-primary">{b.tourTitle}</div>
-                                            <div className="text-xs text-slate-400">{b.id}</div>
+                                            <div className="font-semibold text-primary">{b.tour_title || `Tour #${b.tour_id}`}</div>
+                                            <div className="text-xs text-slate-400">{b.booking_code}</div>
                                         </td>
-                                        <td className="p-4 hidden sm:table-cell text-slate-500">{b.date}</td>
-                                        <td className="p-4 hidden md:table-cell font-semibold text-accent">{formatPrice(b.total)}</td>
+                                        <td className="p-4 hidden sm:table-cell text-slate-500">{b.tour_date}</td>
+                                        <td className="p-4 hidden md:table-cell font-semibold text-accent">{formatPrice(b.total_price)}</td>
                                         <td className="p-4">
                                             <span className={`badge ${statusStyle[b.status] || statusStyle.pending}`}>
                                                 {statusLabel[b.status] || b.status}
