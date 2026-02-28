@@ -4,26 +4,88 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Phone, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function RegisterPage() {
     const router = useRouter();
     const [showPw, setShowPw] = useState(false);
-    const [pw, setPw] = useState("");
     const [loading, setLoading] = useState(false);
     const [agreed, setAgreed] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
 
+    const [form, setForm] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+    });
+
+    const pw = form.password;
     const strength = pw.length === 0 ? 0 : pw.length < 6 ? 1 : pw.length < 10 ? 2 : /[A-Z]/.test(pw) && /[0-9]/.test(pw) ? 4 : 3;
     const strengthLabel = ["", "Lemah", "Sedang", "Kuat", "Sangat Kuat"][strength];
     const strengthColor = ["", "bg-red-400", "bg-amber-400", "bg-blue", "bg-emerald-500"][strength];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError("");
+
+        if (form.password !== form.confirmPassword) {
+            setError("Password dan konfirmasi password tidak sama");
+            return;
+        }
+
+        if (form.password.length < 8) {
+            setError("Password minimal 8 karakter");
+            return;
+        }
+
         setLoading(true);
-        await new Promise((r) => setTimeout(r, 1000));
+        try {
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    firstName: form.firstName,
+                    lastName: form.lastName,
+                    email: form.email,
+                    phone: form.phone,
+                    password: form.password,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.error || "Registrasi gagal");
+                setLoading(false);
+                return;
+            }
+
+            setSuccess(true);
+            setTimeout(() => router.push("/login"), 2000);
+        } catch {
+            setError("Koneksi gagal. Coba lagi.");
+        }
         setLoading(false);
-        router.push("/login");
     };
+
+    if (success) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center p-8 max-w-md">
+                    <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <CheckCircle size={40} className="text-emerald-500" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-primary mb-2">Registrasi Berhasil! 🎉</h2>
+                    <p className="text-slate-500 mb-4">Akun Anda telah dibuat. Mengalihkan ke halaman login...</p>
+                    <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto" />
+                </motion.div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen grid lg:grid-cols-2">
@@ -65,7 +127,13 @@ export default function RegisterPage() {
                     </Link>
 
                     <h2 className="text-3xl font-bold text-primary mb-2">Buat Akun Baru</h2>
-                    <p className="text-slate-500 mb-8">Sudah punya akun? <Link href="/login" className="text-accent font-semibold hover:underline">Masuk di sini</Link></p>
+                    <p className="text-slate-500 mb-6">Sudah punya akun? <Link href="/login" className="text-accent font-semibold hover:underline">Masuk di sini</Link></p>
+
+                    {error && (
+                        <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl mb-4 text-sm">
+                            <AlertCircle size={16} /> {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-3">
@@ -73,12 +141,12 @@ export default function RegisterPage() {
                                 <label className="form-label">Nama Depan</label>
                                 <div className="relative">
                                     <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                    <input type="text" required placeholder="Budi" className="form-input pl-9 text-sm" />
+                                    <input type="text" required placeholder="Budi" className="form-input pl-9 text-sm" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} />
                                 </div>
                             </div>
                             <div>
                                 <label className="form-label">Nama Belakang</label>
-                                <input type="text" required placeholder="Santoso" className="form-input text-sm" />
+                                <input type="text" placeholder="Santoso" className="form-input text-sm" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} />
                             </div>
                         </div>
 
@@ -86,7 +154,7 @@ export default function RegisterPage() {
                             <label className="form-label">Email</label>
                             <div className="relative">
                                 <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input type="email" required placeholder="email@example.com" className="form-input pl-9 text-sm" />
+                                <input type="email" required placeholder="email@example.com" className="form-input pl-9 text-sm" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                             </div>
                         </div>
 
@@ -94,7 +162,7 @@ export default function RegisterPage() {
                             <label className="form-label">No. HP / WhatsApp</label>
                             <div className="relative">
                                 <Phone size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input type="tel" placeholder="+62 812-xxxx-xxxx" className="form-input pl-9 text-sm" />
+                                <input type="tel" placeholder="+62 812-xxxx-xxxx" className="form-input pl-9 text-sm" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
                             </div>
                         </div>
 
@@ -102,7 +170,7 @@ export default function RegisterPage() {
                             <label className="form-label">Password</label>
                             <div className="relative">
                                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input type={showPw ? "text" : "password"} value={pw} onChange={(e) => setPw(e.target.value)} required placeholder="Min. 8 karakter" className="form-input pl-9 pr-9 text-sm" minLength={8} />
+                                <input type={showPw ? "text" : "password"} value={pw} onChange={(e) => setForm({ ...form, password: e.target.value })} required placeholder="Min. 8 karakter" className="form-input pl-9 pr-9 text-sm" minLength={8} />
                                 <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
                                     {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
                                 </button>
@@ -121,7 +189,7 @@ export default function RegisterPage() {
                             <label className="form-label">Konfirmasi Password</label>
                             <div className="relative">
                                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input type="password" required placeholder="Ulangi password" className="form-input pl-9 text-sm" />
+                                <input type="password" required placeholder="Ulangi password" className="form-input pl-9 text-sm" value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} />
                             </div>
                         </div>
 
@@ -135,6 +203,16 @@ export default function RegisterPage() {
                         <button type="submit" disabled={loading || !agreed} className="btn btn-primary w-full text-base py-3.5 disabled:opacity-50 disabled:cursor-not-allowed">
                             {loading ? "Mendaftarkan..." : "Daftar Sekarang"}
                         </button>
+
+                        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-2">
+                            <p className="text-xs font-semibold text-slate-500 mb-2">📋 Akun Demo (untuk testing):</p>
+                            <div className="space-y-1 text-xs text-slate-500">
+                                <p><span className="font-medium">Owner:</span> owner@senja.com</p>
+                                <p><span className="font-medium">Admin:</span> admin@senja.com</p>
+                                <p><span className="font-medium">User:</span> user@senja.com</p>
+                                <p><span className="font-medium">Password:</span> password123</p>
+                            </div>
+                        </div>
                     </form>
                 </motion.div>
             </div>

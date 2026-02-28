@@ -16,18 +16,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Email wajib diisi" }, { status: 400 });
         }
 
-        // Check if user exists in DB
-        let userExists = false;
-        try {
-            const [rows] = await db.query<RowDataPacket[]>(
-                "SELECT id, name FROM users WHERE email = ?",
-                [email]
-            );
-            userExists = rows.length > 0;
-        } catch {
-            // Fallback: accept any email for demo
-            userExists = true;
-        }
+        // Check if user exists in DB (for demo: always send email)
+        const userExists = true;
 
         // Always return success (security: don't reveal if email exists)
         // But only send email if user exists
@@ -63,18 +53,20 @@ export async function POST(req: NextRequest) {
             const resetLink = `${baseUrl}/reset-password?token=${token}`;
 
             try {
+                const smtpPass = 'SenjaWisata2026';
+                const smtpUser = 'adminsenja@fluentlya.com';
                 const transporter = nodemailer.createTransport({
-                    host: process.env.SMTP_HOST || "mail.fluentlya.com",
-                    port: Number(process.env.SMTP_PORT || 465),
+                    host: "mail.fluentlya.com",
+                    port: 465,
                     secure: true,
                     auth: {
-                        user: process.env.SMTP_USER || "AdminSenja@fluentlya.com",
-                        pass: process.env.SMTP_PASS || "",
+                        user: smtpUser,
+                        pass: smtpPass,
                     },
                 });
 
                 await transporter.sendMail({
-                    from: `"Senja Wisata" <${process.env.SMTP_USER || "AdminSenja@fluentlya.com"}>`,
+                    from: `"Senja Wisata" <${smtpUser}>`,
                     to: email,
                     subject: "Reset Password - Senja Wisata Indonesia",
                     html: `
