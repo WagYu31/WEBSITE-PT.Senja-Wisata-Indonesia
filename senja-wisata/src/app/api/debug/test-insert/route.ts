@@ -24,8 +24,8 @@ export async function GET() {
     // Step 3: Try inserting a test tour
     try {
         const [result] = await db.query(
-            `INSERT IGNORE INTO tours (id, title, slug, description, price, duration, location, category, rating, review_count, max_group, is_active)
-             VALUES (9999, 'Test Tour', 'test-tour', 'Test', 1000000, '3 Days', 'Test Location', 'adventure', 4.5, 0, 20, TRUE)`
+            `INSERT IGNORE INTO tours (id, title, slug, description, price, duration, location, category, image, max_pax, is_active)
+             VALUES (9999, 'Test Tour', 'test-tour', 'Test', 1000000, '3 Days', 'Test Location', 'adventure', '', 20, 1)`
         );
         results.tourInsert = { ok: true, result };
     } catch (err) {

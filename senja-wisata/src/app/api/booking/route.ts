@@ -63,8 +63,8 @@ export async function POST(req: NextRequest) {
             // Auto-insert tour into DB so foreign key works
             try {
                 await db.query(
-                    `INSERT IGNORE INTO tours (id, title, slug, description, price, duration, location, category, rating, review_count, max_group, is_active)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)`,
+                    `INSERT IGNORE INTO tours (id, title, slug, description, price, duration, location, category, image, max_pax, is_active)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
                     [
                         staticTour.id,
                         staticTour.title,
@@ -74,8 +74,7 @@ export async function POST(req: NextRequest) {
                         staticTour.duration || "3 Days",
                         staticTour.location || "",
                         staticTour.category || "adventure",
-                        staticTour.rating || 4.5,
-                        staticTour.reviews || 0,
+                        staticTour.image || "",
                         20,
                     ]
                 );
