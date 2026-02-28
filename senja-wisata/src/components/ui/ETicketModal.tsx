@@ -4,9 +4,11 @@ import { useState } from "react";
 import { X, Printer, MapPin, Calendar, Users, Clock } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { QRCodeSVG } from "qrcode.react";
+import { tours as staticTours } from "@/lib/data";
 
 type Booking = {
   booking_code: string;
+  tour_id?: number;
   tour_title?: string;
   tour_location?: string;
   tour_image?: string;
@@ -33,6 +35,8 @@ export default function ETicketModal({ booking, userName, userEmail, onClose }: 
   const qrUrl = `${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "")}/ticket/${booking.booking_code}`;
   const tourDate = new Date(booking.tour_date);
   const formattedDate = tourDate.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const staticTour = staticTours.find(t => t.id === booking.tour_id);
+  const departureTime = staticTour?.departureTime || "08:00 WIB";
 
   const handlePrint = () => {
     setPrinting(true);
@@ -112,7 +116,7 @@ export default function ETicketModal({ booking, userName, userEmail, onClose }: 
         <div>
           <div class="field-label">📅 Tanggal Berangkat</div>
           <div class="field-value">${formattedDate}</div>
-          <div class="field-sub" style="margin-top:2px">⏰ Jam Keberangkatan: 08:00 WIB</div>
+          <div class="field-sub" style="margin-top:2px">⏰ Jam Keberangkatan: ${departureTime}</div>
         </div>
         <div>
           <div class="field-label">👥 Jumlah Peserta</div>
@@ -250,7 +254,7 @@ export default function ETicketModal({ booking, userName, userEmail, onClose }: 
                 </div>
                 <div className="font-bold text-slate-800">{formattedDate}</div>
                 <div className="flex items-center gap-1 text-slate-500 text-xs mt-1">
-                  <Clock size={10} /> Jam Keberangkatan: <span className="font-semibold">08:00 WIB</span>
+                  <Clock size={10} /> Jam Keberangkatan: <span className="font-semibold">{departureTime}</span>
                 </div>
               </div>
               <div>

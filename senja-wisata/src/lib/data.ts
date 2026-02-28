@@ -34,6 +34,7 @@ export const tours: Tour[] = [
             { day: 7, title: "Check-out & Pulang", description: "Sarapan, packing, transfer ke Sorong, penerbangan pulang." },
         ],
         island: "Papua",
+        departureTime: "06:00 WIB",
     },
     {
         id: 2,
@@ -64,6 +65,7 @@ export const tours: Tour[] = [
             { day: 5, title: "Free & Departing", description: "Shopping di Seminyak, sunset Uluwatu, transfer bandara." },
         ],
         island: "Bali",
+        departureTime: "08:00 WITA",
     },
     {
         id: 3,
@@ -87,6 +89,7 @@ export const tours: Tour[] = [
             { day: 2, title: "Sunrise & Bromo Crater", description: "Bangun 03:00, jeep ke Penanjakan, sunrise view, turun ke kawah Bromo." },
         ],
         island: "Jawa",
+        departureTime: "04:00 WIB",
     },
     {
         id: 4,
@@ -111,6 +114,7 @@ export const tours: Tour[] = [
             { day: 3, title: "Merapi Lava Tour", description: "Jeep Merapi lava tour pagi, siang check-out." },
         ],
         island: "Jawa",
+        departureTime: "07:00 WIB",
     },
     {
         id: 5,
@@ -136,6 +140,7 @@ export const tours: Tour[] = [
             { day: 4, title: "Kanawa & Kembali", description: "Snorkeling Kanawa Island, kembali ke Labuan Bajo." },
         ],
         island: "NTT",
+        departureTime: "09:00 WITA",
     },
     {
         id: 6,
@@ -162,6 +167,7 @@ export const tours: Tour[] = [
             { day: 5, title: "Sasak Village & Pulang", description: "Desa Sade, tenun tradisional, transfer bandara." },
         ],
         island: "NTB",
+        departureTime: "08:00 WITA",
     },
     // ====== FAMILY ======
     {
@@ -190,6 +196,7 @@ export const tours: Tour[] = [
             { day: 5, title: "Souvenir & Pulang", description: "Belanja oleh-oleh Krisna, santap seafood terakhir, transfer bandara." },
         ],
         island: "Bali",
+        departureTime: "09:00 WITA",
     },
     {
         id: 12,
@@ -215,6 +222,7 @@ export const tours: Tour[] = [
             { day: 4, title: "Pusat Oleh-oleh & Pulang", description: "Kunjungan pabrik bakpia, Pasar Beringharjo, transfer stasiun/bandara." },
         ],
         island: "Jawa",
+        departureTime: "07:00 WIB",
     },
     // ====== HONEYMOON ======
     {
@@ -244,6 +252,7 @@ export const tours: Tour[] = [
             { day: 6, title: "Pulang", description: "Sarapan, check-out, speed boat ke Malé, penerbangan kembali." },
         ],
         island: "Maladewa",
+        departureTime: "10:00 WIB",
     },
     {
         id: 14,
@@ -271,6 +280,7 @@ export const tours: Tour[] = [
             { day: 5, title: "Free & Pulang", description: "Sarapan romantic, shopping terakhir, transfer bandara." },
         ],
         island: "Bali",
+        departureTime: "10:00 WITA",
     },
 
     {
@@ -301,6 +311,7 @@ export const tours: Tour[] = [
             { day: 4, title: "Genting & Pulang", description: "Cable car Genting Highlands, makan siang, transfer bandara." },
         ],
         island: "Malaysia",
+        departureTime: "08:00 WIB",
     },
     {
         id: 8,
@@ -332,6 +343,7 @@ export const tours: Tour[] = [
             { day: 6, title: "Phuket Town & Pulang", description: "Old Town Phuket, oleh-oleh, transfer bandara." },
         ],
         island: "Thailand",
+        departureTime: "07:00 WIB",
     },
     {
         id: 9,
@@ -366,6 +378,7 @@ export const tours: Tour[] = [
             { day: 9, title: "Pulang", description: "Sarapan, oleh-oleh terakhir, transfer Kansai Airport." },
         ],
         island: "Jepang",
+        departureTime: "06:00 WIB",
     },
     {
         id: 10,
@@ -398,6 +411,7 @@ export const tours: Tour[] = [
             { day: 8, title: "Pulang", description: "Transfer bandara Ankara/Istanbul, penerbangan kembali ke Indonesia." },
         ],
         island: "Turki",
+        departureTime: "05:00 WIB",
     },
 ];
 

@@ -18,6 +18,7 @@ export interface Tour {
     description: string;
     itinerary: ItineraryDay[];
     island: string;
+    departureTime?: string;
 }
 
 export interface ItineraryDay {
