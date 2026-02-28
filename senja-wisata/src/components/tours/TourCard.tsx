@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { Tour } from "@/types";
 import { formatPrice, cn } from "@/lib/utils";
 import { useWishlistStore } from "@/store/wishlist";
+import { useAuthStore } from "@/store/auth";
+import { useEffect } from "react";
 
 interface TourCardProps {
     tour: Tour;
@@ -21,8 +23,14 @@ const badgeColors: Record<string, string> = {
 };
 
 export default function TourCard({ tour, index = 0 }: TourCardProps) {
+    const { user } = useAuthStore();
     const toggle = useWishlistStore((s) => s.toggle);
     const isWishlisted = useWishlistStore((s) => s.has(tour.id));
+    const syncFromDB = useWishlistStore((s) => s.syncFromDB);
+
+    useEffect(() => {
+        if (user?.id) syncFromDB(user.id);
+    }, [user?.id, syncFromDB]);
 
     return (
         <motion.div
@@ -62,7 +70,7 @@ export default function TourCard({ tour, index = 0 }: TourCardProps) {
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            toggle(tour.id);
+                            toggle(tour.id, user?.id);
                         }}
                         className={cn(
                             "absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200",
