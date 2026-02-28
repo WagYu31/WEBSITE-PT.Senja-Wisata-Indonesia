@@ -1,21 +1,63 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Grid, List, SlidersHorizontal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import TourCard from "@/components/tours/TourCard";
-import { tours, categories } from "@/lib/data";
+import { tours as staticTours, categories } from "@/lib/data";
+import { Tour } from "@/types";
+
+const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80";
 
 export default function ToursPage() {
     const [query, setQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState("popular");
     const [view, setView] = useState<"grid" | "list">("grid");
-    const [priceRange, setPriceRange] = useState<[number, number]>([0, 30000000]);
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000000]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [dbTours, setDbTours] = useState<Tour[]>([]);
+
+    useEffect(() => {
+        fetch("/api/tours")
+            .then(r => r.json())
+            .then(data => {
+                if (data.tours?.length) {
+                    setDbTours(data.tours.map((t: Tour & Record<string, unknown>) => ({
+                        id: t.id,
+                        slug: t.slug || String(t.id),
+                        title: t.title,
+                        location: t.location || "",
+                        duration: t.duration || "",
+                        rating: Number(t.rating) || 4.5,
+                        reviews: Number(t.reviews) || 0,
+                        price: Number(t.price) || 0,
+                        originalPrice: undefined,
+                        image: t.image && String(t.image).startsWith("http") ? t.image : PLACEHOLDER_IMAGE,
+                        gallery: [],
+                        category: t.category || "Adventure",
+                        badge: "",
+                        includes: [],
+                        maxPax: 20,
+                        minAge: 0,
+                        description: t.description || "",
+                        itinerary: [],
+                        island: "",
+                    })));
+                }
+            })
+            .catch(() => { });
+    }, []);
+
+    // Merge: static + DB-only tours
+    const allTours = useMemo(() => {
+        const staticIds = new Set(staticTours.map(t => t.id));
+        const extraTours = dbTours.filter(t => !staticIds.has(t.id));
+        return [...staticTours, ...extraTours];
+    }, [dbTours]);
 
     const filtered = useMemo(() => {
-        let result = [...tours];
+        let result = [...allTours];
         if (query) result = result.filter((t) => t.title.toLowerCase().includes(query.toLowerCase()) || t.location.toLowerCase().includes(query.toLowerCase()));
         if (selectedCategories.length > 0) result = result.filter((t) => selectedCategories.includes(t.category.toLowerCase()));
         result = result.filter((t) => t.price >= priceRange[0] && t.price <= priceRange[1]);
@@ -23,7 +65,7 @@ export default function ToursPage() {
         else if (sortBy === "price-desc") result.sort((a, b) => b.price - a.price);
         else if (sortBy === "rating") result.sort((a, b) => b.rating - a.rating);
         return result;
-    }, [query, selectedCategories, sortBy, priceRange]);
+    }, [query, selectedCategories, sortBy, priceRange, allTours]);
 
     const toggleCategory = (id: string) =>
         setSelectedCategories((prev) => prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]);
