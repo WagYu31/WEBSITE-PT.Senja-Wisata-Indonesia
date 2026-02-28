@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { RowDataPacket } from "mysql2";
+import { RowDataPacket, ResultSetHeader } from "mysql2";
+import bcrypt from "bcryptjs";
 
 export async function GET() {
     try {
@@ -30,5 +31,39 @@ export async function GET() {
             { success: false, error: "Gagal memuat data users" },
             { status: 500 }
         );
+    }
+}
+
+// POST: Create new user
+export async function POST(req: NextRequest) {
+    try {
+        const { name, email, password, role } = await req.json();
+
+        if (!name || !email || !password) {
+            return NextResponse.json({ success: false, error: "Nama, email, dan password wajib diisi" }, { status: 400 });
+        }
+
+        // Check duplicate email
+        const [existing] = await db.query<RowDataPacket[]>("SELECT id FROM users WHERE email = ?", [email]);
+        if (existing.length > 0) {
+            return NextResponse.json({ success: false, error: "Email sudah terdaftar" }, { status: 400 });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const userRole = role || "user";
+
+        const [result] = await db.query<ResultSetHeader>(
+            "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
+            [name, email, hashedPassword, userRole]
+        );
+
+        return NextResponse.json({
+            success: true,
+            user: { id: result.insertId, name, email, role: userRole },
+            message: "User berhasil ditambahkan"
+        });
+    } catch (err) {
+        console.error("Create user error:", err);
+        return NextResponse.json({ success: false, error: "Gagal menambahkan user" }, { status: 500 });
     }
 }
