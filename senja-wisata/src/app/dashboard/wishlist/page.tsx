@@ -1,23 +1,87 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, MapPin, Clock, Star, Trash2 } from "lucide-react";
+import { Heart, MapPin, Clock, Star, Trash2, Loader2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import { useAuthStore } from "@/store/auth";
+import { tours as staticTours } from "@/lib/data";
 
-const initialWishlist = [
-    { id: 1, slug: "raja-ampat-paradise", title: "Raja Ampat Paradise", location: "Papua Barat", duration: "7 Days", rating: 4.9, price: 8500000, image: "https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=600&q=70", category: "Beach" },
-    { id: 2, slug: "komodo-island-adventure", title: "Komodo Island Adventure", location: "NTT", duration: "4 Days", rating: 4.8, price: 7200000, image: "https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=600&q=70", category: "Adventure" },
-    { id: 3, slug: "lombok-gili-islands", title: "Lombok & Gili Islands", location: "NTB", duration: "5 Days", rating: 4.7, price: 4800000, image: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=600&q=70", category: "Beach" },
-    { id: 4, slug: "yogyakarta-cultural", title: "Yogyakarta Cultural Tour", location: "DIY Yogyakarta", duration: "3 Days", rating: 4.6, price: 2400000, image: "https://images.unsplash.com/photo-1584810359583-96fc3448beaa?w=600&q=70", category: "Culture" },
-    { id: 5, slug: "bali-complete-experience", title: "Bali Complete Experience", location: "Bali", duration: "5 Days", rating: 4.8, price: 5200000, image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=70", category: "Culture" },
-];
+interface WishlistItem {
+    id: number;
+    tour_id: number;
+    title: string;
+    slug: string;
+    location: string;
+    duration: string;
+    price: number;
+    image: string;
+    category: string;
+    rating?: number;
+}
 
 export default function WishlistPage() {
-    const [wishlist, setWishlist] = useState(initialWishlist);
+    const { user } = useAuthStore();
+    const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const remove = (id: number) => setWishlist((w) => w.filter((t) => t.id !== id));
+    const fetchWishlist = useCallback(async () => {
+        if (!user?.id) return;
+        try {
+            const res = await fetch(`/api/wishlist?userId=${user.id}`);
+            const data = await res.json();
+            if (data.wishlists) {
+                // Enrich with static data for missing fields (image, rating)
+                const enriched = data.wishlists.map((w: WishlistItem) => {
+                    const staticTour = staticTours.find(t => t.id === w.tour_id);
+                    return {
+                        ...w,
+                        image: w.image || staticTour?.image || "",
+                        rating: staticTour?.rating || 4.5,
+                        slug: w.slug || staticTour?.slug || "",
+                        category: w.category || staticTour?.category || "",
+                        duration: w.duration || staticTour?.duration || "",
+                        location: w.location || staticTour?.location || "",
+                        title: w.title || staticTour?.title || "Tour",
+                        price: w.price || staticTour?.price || 0,
+                    };
+                });
+                setWishlist(enriched);
+            }
+        } catch (err) {
+            console.error("Failed to fetch wishlist:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, [user?.id]);
+
+    useEffect(() => {
+        fetchWishlist();
+    }, [fetchWishlist]);
+
+    const remove = async (tourId: number) => {
+        // Optimistic UI
+        setWishlist((w) => w.filter((t) => t.tour_id !== tourId));
+        try {
+            await fetch("/api/wishlist", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: user?.id, tourId }),
+            });
+        } catch {
+            // If delete fails, re-fetch
+            fetchWishlist();
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-20">
+                <Loader2 className="animate-spin text-blue" size={32} />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -40,7 +104,7 @@ export default function WishlistPage() {
                     <AnimatePresence>
                         {wishlist.map((tour) => (
                             <motion.div
-                                key={tour.id}
+                                key={tour.tour_id}
                                 layout
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -55,7 +119,7 @@ export default function WishlistPage() {
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                                     <button
-                                        onClick={() => remove(tour.id)}
+                                        onClick={() => remove(tour.tour_id)}
                                         className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md text-accent hover:bg-accent hover:text-white transition-all"
                                         title="Hapus dari wishlist"
                                     >
