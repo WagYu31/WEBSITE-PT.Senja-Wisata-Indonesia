@@ -6,42 +6,42 @@ import { formatPrice } from "@/lib/utils";
 import { QRCodeSVG } from "qrcode.react";
 
 type Booking = {
-    booking_code: string;
-    tour_title?: string;
-    tour_location?: string;
-    tour_image?: string;
-    tour_date: string;
-    guests: number;
-    adults: number;
-    children: number;
-    total_price: number;
-    status: string;
-    payment_status: string;
-    created_at: string;
+  booking_code: string;
+  tour_title?: string;
+  tour_location?: string;
+  tour_image?: string;
+  tour_date: string;
+  guests: number;
+  adults: number;
+  children: number;
+  total_price: number;
+  status: string;
+  payment_status: string;
+  created_at: string;
 };
 
 interface ETicketModalProps {
-    booking: Booking;
-    userName?: string;
-    userEmail?: string;
-    onClose: () => void;
+  booking: Booking;
+  userName?: string;
+  userEmail?: string;
+  onClose: () => void;
 }
 
 export default function ETicketModal({ booking, userName, userEmail, onClose }: ETicketModalProps) {
-    const [printing, setPrinting] = useState(false);
+  const [printing, setPrinting] = useState(false);
 
-    const qrUrl = `${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "")}/ticket/${booking.booking_code}`;
-    const tourDate = new Date(booking.tour_date);
-    const formattedDate = tourDate.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const qrUrl = `${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "")}/ticket/${booking.booking_code}`;
+  const tourDate = new Date(booking.tour_date);
+  const formattedDate = tourDate.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
-    const handlePrint = () => {
-        setPrinting(true);
+  const handlePrint = () => {
+    setPrinting(true);
 
-        // Build QR code as SVG data URL using a simple URL-safe QR
-        // We'll use a Google Charts QR API as the QR image src for the popup
-        const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrUrl)}&color=05073C&bgcolor=ffffff`;
+    // Build QR code as SVG data URL using a simple URL-safe QR
+    // We'll use a Google Charts QR API as the QR image src for the popup
+    const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrUrl)}&color=05073C&bgcolor=ffffff`;
 
-        const html = `<!DOCTYPE html>
+    const html = `<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
@@ -112,6 +112,7 @@ export default function ETicketModal({ booking, userName, userEmail, onClose }: 
         <div>
           <div class="field-label">📅 Tanggal Berangkat</div>
           <div class="field-value">${formattedDate}</div>
+          <div class="field-sub" style="margin-top:2px">⏰ Jam Keberangkatan: 08:00 WIB</div>
         </div>
         <div>
           <div class="field-label">👥 Jumlah Peserta</div>
@@ -171,164 +172,167 @@ export default function ETicketModal({ booking, userName, userEmail, onClose }: 
 </body>
 </html>`;
 
-        const popup = window.open("", "_blank", "width=600,height=800,scrollbars=yes");
-        if (popup) {
-            popup.document.write(html);
-            popup.document.close();
-        } else {
-            alert("Browser memblokir popup. Izinkan popup untuk localhost:3000 di browser Anda.");
-        }
+    const popup = window.open("", "_blank", "width=600,height=800,scrollbars=yes");
+    if (popup) {
+      popup.document.write(html);
+      popup.document.close();
+    } else {
+      alert("Browser memblokir popup. Izinkan popup untuk localhost:3000 di browser Anda.");
+    }
 
-        setTimeout(() => setPrinting(false), 1000);
-    };
+    setTimeout(() => setPrinting(false), 1000);
+  };
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto" style={{ backgroundColor: "rgba(0,0,0,0.7)" }}>
-            <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl my-4">
-                {/* Actions header */}
-                <div className="flex items-center justify-between p-4 border-b border-slate-100">
-                    <h3 className="font-bold text-slate-800">E-Ticket</h3>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={handlePrint}
-                            disabled={printing}
-                            className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent/90 transition-all disabled:opacity-70"
-                        >
-                            <Printer size={14} />
-                            {printing ? "Mencetak..." : "Print / Save PDF"}
-                        </button>
-                        <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400">
-                            <X size={18} />
-                        </button>
-                    </div>
-                </div>
-
-                {/* ===== TICKET DESIGN (rendered to PDF) ===== */}
-                <div className="p-6 bg-white">
-                    {/* Header */}
-                    <div className="rounded-2xl overflow-hidden mb-0" style={{ background: "linear-gradient(135deg, #05073C 0%, #0a1564 60%, #1a2d8a 100%)" }}>
-                        <div className="p-6 text-white relative overflow-hidden">
-                            {/* Decorative circles */}
-                            <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-10" style={{ background: "white" }} />
-                            <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full opacity-10" style={{ background: "white" }} />
-
-                            <div className="relative z-10">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                                        <span className="text-white font-bold text-sm">SW</span>
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-sm">PT. Senja Wisata Indonesia</div>
-                                        <div className="text-white/60 text-xs">Liburan Impian Anda</div>
-                                    </div>
-                                </div>
-
-                                <div className="text-white/60 text-xs uppercase tracking-wider mb-1">E-Ticket Perjalanan</div>
-                                <h2 className="text-2xl font-bold mb-1">{booking.tour_title || "Tour Package"}</h2>
-                                <div className="flex items-center gap-1 text-white/80 text-sm">
-                                    <MapPin size={12} />
-                                    <span>{booking.tour_location || "Indonesia"}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Ticket tear line */}
-                        <div className="flex items-center" style={{ background: "#f8fafc" }}>
-                            <div className="w-5 h-5 rounded-full" style={{ background: "linear-gradient(135deg, #05073C 0%, #1a2d8a 100%)", marginLeft: "-10px" }} />
-                            <div className="flex-1 border-t-2 border-dashed border-slate-300 mx-2" />
-                            <div className="w-5 h-5 rounded-full" style={{ background: "linear-gradient(135deg, #05073C 0%, #1a2d8a 100%)", marginRight: "-10px" }} />
-                        </div>
-                    </div>
-
-                    {/* Ticket body */}
-                    <div className="border border-slate-200 border-t-0 rounded-b-2xl overflow-hidden">
-                        <div className="p-5 bg-slate-50/50 grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <div className="flex items-center gap-1 text-slate-400 text-xs uppercase font-semibold mb-1">
-                                    <Calendar size={10} /> Tanggal Berangkat
-                                </div>
-                                <div className="font-bold text-slate-800">{formattedDate}</div>
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-1 text-slate-400 text-xs uppercase font-semibold mb-1">
-                                    <Users size={10} /> Jumlah Peserta
-                                </div>
-                                <div className="font-bold text-slate-800">
-                                    {booking.guests} Orang
-                                    <span className="text-xs text-slate-400 font-normal ml-1">
-                                        ({booking.adults} Dewasa{booking.children > 0 ? `, ${booking.children} Anak` : ""})
-                                    </span>
-                                </div>
-                            </div>
-                            {userName && (
-                                <div>
-                                    <div className="text-slate-400 text-xs uppercase font-semibold mb-1">Nama Pemesan</div>
-                                    <div className="font-bold text-slate-800">{userName}</div>
-                                </div>
-                            )}
-                            {userEmail && (
-                                <div>
-                                    <div className="text-slate-400 text-xs uppercase font-semibold mb-1">Email</div>
-                                    <div className="font-bold text-slate-800 text-xs break-all">{userEmail}</div>
-                                </div>
-                            )}
-                            <div>
-                                <div className="flex items-center gap-1 text-slate-400 text-xs uppercase font-semibold mb-1">
-                                    <Clock size={10} /> Tanggal Booking
-                                </div>
-                                <div className="font-bold text-slate-800">
-                                    {new Date(booking.created_at).toLocaleDateString("id-ID")}
-                                </div>
-                            </div>
-                            <div>
-                                <div className="text-slate-400 text-xs uppercase font-semibold mb-1">Status Pembayaran</div>
-                                <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold">
-                                    ✓ Lunas
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Total & QR Code */}
-                        <div className="border-t border-dashed border-slate-200 p-5 flex items-end justify-between">
-                            <div>
-                                <div className="text-xs text-slate-400 uppercase font-semibold mb-1">Total Pembayaran</div>
-                                <div className="text-2xl font-bold" style={{ color: "#E85D04" }}>{formatPrice(booking.total_price)}</div>
-                            </div>
-                            {/* Real QR code */}
-                            <div className="text-center">
-                                <div className="w-20 h-20 bg-white border-2 border-slate-200 rounded-lg flex items-center justify-center p-1">
-                                    <QRCodeSVG
-                                        value={`${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "")}/ticket/${booking.booking_code}`}
-                                        size={64}
-                                        level="M"
-                                        fgColor="#05073C"
-                                        bgColor="#ffffff"
-                                    />
-                                </div>
-                                <div className="text-xs text-slate-400 mt-1">Scan QR</div>
-                            </div>
-                        </div>
-
-                        {/* Booking code footer */}
-                        <div className="px-5 pb-5">
-                            <div className="bg-slate-800 text-white rounded-xl p-3 flex items-center justify-between">
-                                <div>
-                                    <div className="text-slate-400 text-xs mb-0.5">Kode Booking</div>
-                                    <div className="font-mono font-bold text-lg tracking-widest">{booking.booking_code}</div>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-slate-400 text-xs mb-0.5">ID Tiket</div>
-                                    <div className="font-mono text-xs text-slate-300">{`SW-${booking.booking_code}`.substring(0, 16)}</div>
-                                </div>
-                            </div>
-                            <p className="text-center text-xs text-slate-400 mt-3">
-                                Harap tunjukkan e-ticket ini saat check-in perjalanan Anda.<br />
-                                Hubungi kami di info@senjawisata.com untuk bantuan.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto" style={{ backgroundColor: "rgba(0,0,0,0.7)" }}>
+      <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl my-4">
+        {/* Actions header */}
+        <div className="flex items-center justify-between p-4 border-b border-slate-100">
+          <h3 className="font-bold text-slate-800">E-Ticket</h3>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrint}
+              disabled={printing}
+              className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent/90 transition-all disabled:opacity-70"
+            >
+              <Printer size={14} />
+              {printing ? "Mencetak..." : "Print / Save PDF"}
+            </button>
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400">
+              <X size={18} />
+            </button>
+          </div>
         </div>
-    );
+
+        {/* ===== TICKET DESIGN (rendered to PDF) ===== */}
+        <div className="p-6 bg-white">
+          {/* Header */}
+          <div className="rounded-2xl overflow-hidden mb-0" style={{ background: "linear-gradient(135deg, #05073C 0%, #0a1564 60%, #1a2d8a 100%)" }}>
+            <div className="p-6 text-white relative overflow-hidden">
+              {/* Decorative circles */}
+              <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-10" style={{ background: "white" }} />
+              <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full opacity-10" style={{ background: "white" }} />
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">SW</span>
+                  </div>
+                  <div>
+                    <div className="font-bold text-sm">PT. Senja Wisata Indonesia</div>
+                    <div className="text-white/60 text-xs">Liburan Impian Anda</div>
+                  </div>
+                </div>
+
+                <div className="text-white/60 text-xs uppercase tracking-wider mb-1">E-Ticket Perjalanan</div>
+                <h2 className="text-2xl font-bold mb-1">{booking.tour_title || "Tour Package"}</h2>
+                <div className="flex items-center gap-1 text-white/80 text-sm">
+                  <MapPin size={12} />
+                  <span>{booking.tour_location || "Indonesia"}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Ticket tear line */}
+            <div className="flex items-center" style={{ background: "#f8fafc" }}>
+              <div className="w-5 h-5 rounded-full" style={{ background: "linear-gradient(135deg, #05073C 0%, #1a2d8a 100%)", marginLeft: "-10px" }} />
+              <div className="flex-1 border-t-2 border-dashed border-slate-300 mx-2" />
+              <div className="w-5 h-5 rounded-full" style={{ background: "linear-gradient(135deg, #05073C 0%, #1a2d8a 100%)", marginRight: "-10px" }} />
+            </div>
+          </div>
+
+          {/* Ticket body */}
+          <div className="border border-slate-200 border-t-0 rounded-b-2xl overflow-hidden">
+            <div className="p-5 bg-slate-50/50 grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="flex items-center gap-1 text-slate-400 text-xs uppercase font-semibold mb-1">
+                  <Calendar size={10} /> Tanggal Berangkat
+                </div>
+                <div className="font-bold text-slate-800">{formattedDate}</div>
+                <div className="flex items-center gap-1 text-slate-500 text-xs mt-1">
+                  <Clock size={10} /> Jam Keberangkatan: <span className="font-semibold">08:00 WIB</span>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-1 text-slate-400 text-xs uppercase font-semibold mb-1">
+                  <Users size={10} /> Jumlah Peserta
+                </div>
+                <div className="font-bold text-slate-800">
+                  {booking.guests} Orang
+                  <span className="text-xs text-slate-400 font-normal ml-1">
+                    ({booking.adults} Dewasa{booking.children > 0 ? `, ${booking.children} Anak` : ""})
+                  </span>
+                </div>
+              </div>
+              {userName && (
+                <div>
+                  <div className="text-slate-400 text-xs uppercase font-semibold mb-1">Nama Pemesan</div>
+                  <div className="font-bold text-slate-800">{userName}</div>
+                </div>
+              )}
+              {userEmail && (
+                <div>
+                  <div className="text-slate-400 text-xs uppercase font-semibold mb-1">Email</div>
+                  <div className="font-bold text-slate-800 text-xs break-all">{userEmail}</div>
+                </div>
+              )}
+              <div>
+                <div className="flex items-center gap-1 text-slate-400 text-xs uppercase font-semibold mb-1">
+                  <Clock size={10} /> Tanggal Booking
+                </div>
+                <div className="font-bold text-slate-800">
+                  {new Date(booking.created_at).toLocaleDateString("id-ID")}
+                </div>
+              </div>
+              <div>
+                <div className="text-slate-400 text-xs uppercase font-semibold mb-1">Status Pembayaran</div>
+                <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold">
+                  ✓ Lunas
+                </div>
+              </div>
+            </div>
+
+            {/* Total & QR Code */}
+            <div className="border-t border-dashed border-slate-200 p-5 flex items-end justify-between">
+              <div>
+                <div className="text-xs text-slate-400 uppercase font-semibold mb-1">Total Pembayaran</div>
+                <div className="text-2xl font-bold" style={{ color: "#E85D04" }}>{formatPrice(booking.total_price)}</div>
+              </div>
+              {/* Real QR code */}
+              <div className="text-center">
+                <div className="w-20 h-20 bg-white border-2 border-slate-200 rounded-lg flex items-center justify-center p-1">
+                  <QRCodeSVG
+                    value={`${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "")}/ticket/${booking.booking_code}`}
+                    size={64}
+                    level="M"
+                    fgColor="#05073C"
+                    bgColor="#ffffff"
+                  />
+                </div>
+                <div className="text-xs text-slate-400 mt-1">Scan QR</div>
+              </div>
+            </div>
+
+            {/* Booking code footer */}
+            <div className="px-5 pb-5">
+              <div className="bg-slate-800 text-white rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <div className="text-slate-400 text-xs mb-0.5">Kode Booking</div>
+                  <div className="font-mono font-bold text-lg tracking-widest">{booking.booking_code}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-slate-400 text-xs mb-0.5">ID Tiket</div>
+                  <div className="font-mono text-xs text-slate-300">{`SW-${booking.booking_code}`.substring(0, 16)}</div>
+                </div>
+              </div>
+              <p className="text-center text-xs text-slate-400 mt-3">
+                Harap tunjukkan e-ticket ini saat check-in perjalanan Anda.<br />
+                Hubungi kami di info@senjawisata.com untuk bantuan.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
