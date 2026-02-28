@@ -78,7 +78,7 @@ export default function UserDashboard() {
                 <div className="absolute right-0 bottom-0 w-48 h-48 bg-white/5 rounded-full -translate-x-8 translate-y-8" />
                 <div className="relative">
                     <p className="text-white/70 text-sm mb-1">Selamat datang kembali,</p>
-                    <h2 className="text-2xl font-bold">{user?.name} 👋</h2>
+                    <h2 className="text-2xl font-bold text-white">{user?.name} 👋</h2>
                     <p className="text-white/60 mt-1 text-sm">Siap petualangan berikutnya?</p>
                     <Link href="/tours" className="btn btn-sm bg-white text-primary mt-4 hover:bg-white/90">
                         Jelajahi Tour
