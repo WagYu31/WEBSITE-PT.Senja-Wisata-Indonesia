@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
             }
 
             // Send email
-            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://fluentlya.com";
+            const baseUrl = "https://fluentlya.com";
             const resetLink = `${baseUrl}/reset-password?token=${token}`;
 
             try {
