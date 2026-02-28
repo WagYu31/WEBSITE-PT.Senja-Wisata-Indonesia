@@ -104,6 +104,8 @@ export async function POST(req: NextRequest) {
         const snapResponse = await snap.createTransaction(parameter);
 
         // Insert booking into DB
+        let dbInsertOk = false;
+        let dbError = "";
         try {
             await db.query(
                 `INSERT INTO bookings 
@@ -112,29 +114,32 @@ export async function POST(req: NextRequest) {
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'pending', ?, ?)`,
                 [bookingCode, userId, tourId, tourDate, totalGuests, adults, children || 0, totalPrice, orderId, snapResponse.token]
             );
-        } catch {
-            // DB might not exist in dev — save to in-memory store as fallback
-            console.warn("[Booking] DB insert skipped — saving to in-memory store");
-            const { tours: staticTours } = await import("@/lib/data");
-            const staticTour = staticTours.find(t => t.id === Number(tourId));
-            bookingStore.add({
-                booking_code: bookingCode,
-                user_id: Number(userId),
-                tour_id: Number(tourId),
-                tour_title: tourTitle,
-                tour_location: staticTour?.location || "",
-                tour_date: tourDate,
-                guests: totalGuests,
-                adults: Number(adults),
-                children: Number(children || 0),
-                total_price: totalPrice,
-                status: "pending",
-                payment_status: "pending",
-                midtrans_order_id: orderId,
-                snap_token: snapResponse.token,
-                created_at: new Date().toISOString(),
-            });
+            dbInsertOk = true;
+        } catch (insertErr) {
+            dbError = insertErr instanceof Error ? insertErr.message : String(insertErr);
+            console.error("[Booking] DB INSERT FAILED:", dbError);
         }
+
+        // Always save to memory as backup for immediate display
+        const { tours: staticTours } = await import("@/lib/data");
+        const staticTour = staticTours.find(t => t.id === Number(tourId));
+        bookingStore.add({
+            booking_code: bookingCode,
+            user_id: Number(userId),
+            tour_id: Number(tourId),
+            tour_title: tourTitle,
+            tour_location: staticTour?.location || "",
+            tour_date: tourDate,
+            guests: totalGuests,
+            adults: Number(adults),
+            children: Number(children || 0),
+            total_price: totalPrice,
+            status: "pending",
+            payment_status: "pending",
+            midtrans_order_id: orderId,
+            snap_token: snapResponse.token,
+            created_at: new Date().toISOString(),
+        });
 
         return NextResponse.json({
             success: true,
@@ -143,6 +148,8 @@ export async function POST(req: NextRequest) {
             snapToken: snapResponse.token,
             redirectUrl: snapResponse.redirect_url,
             totalPrice,
+            dbInsertOk,
+            dbError: dbError || undefined,
         });
     } catch (error: unknown) {
         console.error("[Booking] Error:", error);
