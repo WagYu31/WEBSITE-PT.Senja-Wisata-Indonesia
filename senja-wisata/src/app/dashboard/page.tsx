@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth";
+import { tours as staticTours } from "@/lib/data";
 import { Package, Heart, Star, Calendar, Clock, MapPin, CheckCircle, Loader2 } from "lucide-react";
 
 type Booking = {
@@ -109,9 +110,11 @@ export default function UserDashboard() {
                     </div>
                 ) : upcomingBooking ? (
                     <div className="card p-5 flex flex-col sm:flex-row gap-4">
-                        <div className="w-full sm:w-32 h-28 sm:h-auto bg-gradient-to-br from-blue/20 to-accent/20 rounded-xl flex items-center justify-center">
-                            <MapPin size={32} className="text-blue" />
-                        </div>
+                        <img
+                            src={(() => { const t = staticTours.find(t => t.id === Number(upcomingBooking.tour_id)); return t?.image || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=70"; })()}
+                            alt={upcomingBooking.tour_title || "Tour"}
+                            className="w-full sm:w-32 h-28 sm:h-auto object-cover rounded-xl"
+                        />
                         <div className="flex-1">
                             <div className={`badge ${statusStyle[upcomingBooking.status] || statusStyle.pending} mb-2`}>
                                 <CheckCircle size={12} /> {statusLabel[upcomingBooking.status] || upcomingBooking.status}
