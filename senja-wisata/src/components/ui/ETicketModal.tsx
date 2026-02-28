@@ -223,13 +223,13 @@ export default function ETicketModal({ booking, userName, userEmail, onClose }: 
                     <span className="text-white font-bold text-sm">SW</span>
                   </div>
                   <div>
-                    <div className="font-bold text-sm">PT. Senja Wisata Indonesia</div>
+                    <div className="font-bold text-sm text-white">PT. Senja Wisata Indonesia</div>
                     <div className="text-white/60 text-xs">Liburan Impian Anda</div>
                   </div>
                 </div>
 
                 <div className="text-white/60 text-xs uppercase tracking-wider mb-1">E-Ticket Perjalanan</div>
-                <h2 className="text-2xl font-bold mb-1">{booking.tour_title || "Tour Package"}</h2>
+                <h2 className="text-2xl font-bold mb-1 text-white">{booking.tour_title || "Tour Package"}</h2>
                 <div className="flex items-center gap-1 text-white/80 text-sm">
                   <MapPin size={12} />
                   <span>{booking.tour_location || "Indonesia"}</span>
