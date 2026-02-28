@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { tours as initialTours } from "@/lib/data";
+import { useState, useEffect, useCallback } from "react";
+import { tours as staticTours } from "@/lib/data";
 import { formatPrice } from "@/lib/utils";
 import { Plus, Search, Edit2, Trash2, Eye, Star, MapPin, Clock, X, Package } from "lucide-react";
 
-type Tour = typeof initialTours[0] & { status?: string };
+type Tour = typeof staticTours[0] & { status?: string };
 
 const categoryOptions = ["Semua", "Beach", "Culture", "Adventure", "Family", "Honeymoon", "International"];
 const allCategories = ["Beach", "Culture", "Adventure", "Family", "Honeymoon", "International"];
@@ -13,7 +13,7 @@ const allCategories = ["Beach", "Culture", "Adventure", "Family", "Honeymoon", "
 const emptyForm = { title: "", location: "", price: "", duration: "", category: "Beach", description: "", image: "", rating: "4.5", reviews: "0" };
 
 export default function AdminToursPage() {
-    const [tourList, setTourList] = useState<Tour[]>(initialTours);
+    const [tourList, setTourList] = useState<Tour[]>(staticTours);
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("Semua");
 
@@ -25,6 +25,43 @@ export default function AdminToursPage() {
     const [form, setForm] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
     const [successMsg, setSuccessMsg] = useState("");
+
+    // Load tours from DB and merge with static
+    const loadTours = useCallback(async () => {
+        try {
+            const res = await fetch("/api/tours");
+            const data = await res.json();
+            if (data.tours && data.tours.length > 0) {
+                const dbTours = data.tours as Tour[];
+                const dbIds = new Set(dbTours.map((t: Tour) => t.id));
+                // Merge: DB tours first, then static tours not in DB
+                const merged = [
+                    ...dbTours.map((t: Tour) => ({
+                        ...t,
+                        gallery: [],
+                        includes: [],
+                        itinerary: [],
+                        badge: "",
+                        maxPax: t.maxPax || 20,
+                        minAge: t.minAge || 0,
+                        island: t.island || "",
+                        reviews: t.reviews || 0,
+                        rating: t.rating || 4.5,
+                        originalPrice: t.originalPrice || undefined,
+                        slug: t.slug || "",
+                    })),
+                    ...staticTours.filter(t => !dbIds.has(t.id)),
+                ];
+                setTourList(merged);
+            }
+        } catch {
+            // Fallback to static
+        }
+    }, []);
+
+    useEffect(() => {
+        loadTours();
+    }, [loadTours]);
 
     const filtered = tourList.filter((t) => {
         const matchSearch = t.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -55,40 +92,62 @@ export default function AdminToursPage() {
         setShowForm(true);
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!form.title || !form.location || !form.price) return;
         setSaving(true);
-        setTimeout(() => {
-            setSaving(false);
+        try {
             if (editingTour) {
-                setTourList(prev => prev.map(t => t.id === editingTour.id
-                    ? { ...t, ...form, price: Number(form.price), rating: Number(form.rating), reviews: Number(form.reviews) }
-                    : t
-                ));
-                showSuccess("Tour berhasil diperbarui!");
+                const res = await fetch("/api/tours", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: editingTour.id, ...form, price: Number(form.price) }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showSuccess("Tour berhasil diperbarui!");
+                    await loadTours();
+                } else {
+                    showSuccess("Error: " + (data.error || "Gagal update"));
+                }
             } else {
-                const newTour: Tour = {
-                    ...initialTours[0],
-                    id: Date.now(),
-                    ...form,
-                    price: Number(form.price),
-                    rating: Number(form.rating),
-                    reviews: Number(form.reviews),
-                    originalPrice: undefined,
-                    badge: "",
-                };
-                setTourList(prev => [newTour, ...prev]);
-                showSuccess("Tour baru berhasil ditambahkan!");
+                const res = await fetch("/api/tours", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ...form, price: Number(form.price) }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showSuccess("Tour baru berhasil ditambahkan!");
+                    await loadTours();
+                } else {
+                    showSuccess("Error: " + (data.error || "Gagal tambah"));
+                }
             }
             setShowForm(false);
-        }, 800);
+        } catch (err) {
+            showSuccess("Error: " + String(err));
+        } finally {
+            setSaving(false);
+        }
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!deleteTarget) return;
-        setTourList(prev => prev.filter(t => t.id !== deleteTarget.id));
+        try {
+            const res = await fetch("/api/tours", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: deleteTarget.id }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                showSuccess("Tour berhasil dihapus.");
+                await loadTours();
+            }
+        } catch {
+            showSuccess("Gagal menghapus tour.");
+        }
         setDeleteTarget(null);
-        showSuccess("Tour berhasil dihapus.");
     };
 
     const showSuccess = (msg: string) => {
