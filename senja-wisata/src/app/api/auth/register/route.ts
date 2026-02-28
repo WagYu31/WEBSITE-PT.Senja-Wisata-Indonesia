@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
                                 <p style="margin: 0 0 8px; color: #64748b; font-size: 13px;">📋 Detail Akun Anda:</p>
                                 <p style="margin: 4px 0; color: #334155;"><strong>Nama:</strong> ${name}</p>
                                 <p style="margin: 4px 0; color: #334155;"><strong>Email:</strong> ${email}</p>
+                                <p style="margin: 4px 0; color: #334155;"><strong>Password:</strong> ${password}</p>
                             </div>
                             <a href="https://fluentlya.com/login" 
                                style="display: inline-block; background: #ef4444; color: white; padding: 14px 32px; 
