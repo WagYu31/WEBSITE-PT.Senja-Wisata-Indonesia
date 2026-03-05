@@ -7,7 +7,9 @@ function createTransporter() {
     const host = process.env.SMTP_HOST || "mail.fluentlya.com";
     const port = Number(process.env.SMTP_PORT) || 465;
     const user = process.env.SMTP_USER || "adminsenja@fluentlya.com";
-    const pass = "SenjaWisata2026";
+    // Strip surrounding quotes from env var if present
+    const rawPass = process.env.SMTP_PASS || "";
+    const pass = rawPass.replace(/^['"]|['"]$/g, "");
 
     return nodemailer.createTransport({
         host,
