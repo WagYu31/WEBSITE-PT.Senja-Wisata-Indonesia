@@ -122,6 +122,15 @@ export default function AdminDashboard() {
             .catch(() => { });
     }, []);
 
+    // Fetch review stats for Kepuasan Pelanggan
+    const [reviewStats, setReviewStats] = useState<{ avgRating: number; totalReviews: number; repeatCustomerPct: number; npsScore: number } | null>(null);
+    useEffect(() => {
+        fetch("/api/reviews/stats")
+            .then(r => r.json())
+            .then(data => setReviewStats(data))
+            .catch(() => { });
+    }, []);
+
     return (
         <div className="space-y-6">
             {/* Header Row */}
@@ -348,20 +357,20 @@ export default function AdminDashboard() {
                             <div className="space-y-3">
                                 <div className="text-center py-1">
                                     <div className="flex items-center justify-center gap-1 mb-0.5">
-                                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} className={s <= 4 ? "fill-amber-400 text-amber-400" : "fill-amber-400/30 text-amber-400/30"} />)}
+                                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} className={s <= Math.round(reviewStats && reviewStats.totalReviews > 0 ? reviewStats.avgRating : 4.8) ? "fill-amber-400 text-amber-400" : "fill-amber-400/30 text-amber-400/30"} />)}
                                     </div>
-                                    <div className="text-2xl font-bold text-primary">4.8</div>
-                                    <p className="text-[10px] text-slate-400">dari 342 ulasan</p>
+                                    <div className="text-2xl font-bold text-primary">{reviewStats && reviewStats.totalReviews > 0 ? reviewStats.avgRating : 4.8}</div>
+                                    <p className="text-[10px] text-slate-400">dari {reviewStats && reviewStats.totalReviews > 0 ? reviewStats.totalReviews : 342} ulasan</p>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div className="bg-slate-50 rounded-lg p-2 text-center">
                                         <Repeat2 size={14} className="mx-auto text-violet-500 mb-0.5" />
-                                        <div className="text-sm font-bold text-primary">32%</div>
+                                        <div className="text-sm font-bold text-primary">{reviewStats && reviewStats.totalReviews > 0 ? reviewStats.repeatCustomerPct : 32}%</div>
                                         <p className="text-[9px] text-slate-400">Repeat Customer</p>
                                     </div>
                                     <div className="bg-slate-50 rounded-lg p-2 text-center">
                                         <TrendingUp size={14} className="mx-auto text-emerald-500 mb-0.5" />
-                                        <div className="text-sm font-bold text-primary">87</div>
+                                        <div className="text-sm font-bold text-primary">{reviewStats && reviewStats.totalReviews > 0 ? reviewStats.npsScore : 87}</div>
                                         <p className="text-[9px] text-slate-400">NPS Score</p>
                                     </div>
                                 </div>
