@@ -7,7 +7,7 @@ function createTransporter() {
     const host = "mail.fluentlya.com";
     const port = 465;
     const user = "adminsenja@fluentlya.com";
-    const pass = "Q8t]P$VctnwQZexS";
+    const pass = "SenjaWisata2026";
 
     return nodemailer.createTransport({
         host,
