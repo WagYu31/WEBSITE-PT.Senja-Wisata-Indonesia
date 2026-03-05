@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
+import InstallPrompt from "@/components/ui/InstallPrompt";
 
 const demoAccounts = [
     { role: "👑 Owner", email: "owner@senja.com", password: "owner123" },
@@ -79,6 +80,8 @@ export default function LoginPage() {
                         </svg>
                         <span className="font-bold text-primary">Senja Wisata</span>
                     </Link>
+
+                    <InstallPrompt />
 
                     <h2 className="text-3xl font-bold text-primary mb-2">Masuk ke Akun</h2>
                     <p className="text-slate-500 mb-8">Belum punya akun? <Link href="/register" className="text-accent font-semibold hover:underline">Daftar gratis</Link></p>

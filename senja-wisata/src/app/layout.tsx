@@ -63,6 +63,13 @@ export default function RootLayout({
 
   return (
     <html lang="id" className={`${poppins.variable} ${playfair.variable}`}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#05073C" />
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
       <body className="font-sans antialiased bg-white text-primary-900">
         {children}
         <Script
@@ -70,6 +77,11 @@ export default function RootLayout({
           data-client-key={midtransClientKey}
           strategy="lazyOnload"
         />
+        <Script id="sw-register" strategy="lazyOnload">{`
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+          }
+        `}</Script>
       </body>
     </html>
   );
