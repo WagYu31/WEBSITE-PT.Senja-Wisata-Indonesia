@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Search, MapPin, Calendar, Users, ChevronRight, Star } from "lucide-react";
+import { useSiteSettings } from "@/lib/settings";
 
 const bgImages = [
     "https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=1920&q=80",
@@ -19,6 +20,7 @@ export default function HeroSection() {
     const [activeTab, setActiveTab] = useState("Semua");
     const [destination, setDestination] = useState("");
     const [bgIdx] = useState(0);
+    const settings = useSiteSettings();
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -66,7 +68,7 @@ export default function HeroSection() {
                             transition={{ duration: 0.6 }}
                             className="flex items-center gap-2 mb-6"
                         >
-                            <span className="italic font-serif text-blue text-xl">✈ Explore The World</span>
+                            <span className="italic font-serif text-blue text-xl">{settings.hero.tagline}</span>
                         </motion.div>
 
                         <motion.h1
@@ -75,11 +77,11 @@ export default function HeroSection() {
                             transition={{ duration: 0.7, delay: 0.1 }}
                             className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.05] mb-6"
                         >
-                            Hemat &amp;{" "}
-                            <span className="italic font-serif">Nikmati</span>
+                            {settings.hero.title1}{" "}
+                            <span className="italic font-serif">{settings.hero.title2}</span>
                             <br />
                             Liburan{" "}
-                            <span className="text-accent">Terbaik</span>
+                            <span className="text-accent">{settings.hero.titleAccent}</span>
                             <br />
                             Anda
                         </motion.h1>
@@ -90,7 +92,7 @@ export default function HeroSection() {
                             transition={{ duration: 0.6, delay: 0.2 }}
                             className="text-white/70 text-lg leading-relaxed mb-8 max-w-lg"
                         >
-                            Kami menghadirkan pengalaman wisata tak terlupakan ke seluruh destinasi impian Indonesia dengan harga terbaik dan pelayanan premium.
+                            {settings.hero.subtitle}
                         </motion.p>
 
                         <motion.div
@@ -100,10 +102,10 @@ export default function HeroSection() {
                             className="flex gap-3 flex-wrap mb-10"
                         >
                             <a href="/tours" className="btn btn-primary btn-lg">
-                                Jelajahi Paket <ChevronRight size={18} />
+                                {settings.hero.ctaPrimary} <ChevronRight size={18} />
                             </a>
                             <a href="/about" className="btn btn-outline-white btn-lg">
-                                Tentang Kami
+                                {settings.hero.ctaSecondary}
                             </a>
                         </motion.div>
 
@@ -114,7 +116,7 @@ export default function HeroSection() {
                             transition={{ delay: 0.5 }}
                             className="flex gap-6 flex-wrap"
                         >
-                            {[["500+", "Paket Wisata"], ["15K+", "Happy Travelers"], ["4.9★", "Rating"]].map(([val, lbl]) => (
+                            {[[settings.stats.stat2Value, settings.stats.stat2Label], [settings.stats.stat3Value, settings.stats.stat3Label], [settings.stats.stat4Value + "★", settings.stats.stat4Label]].map(([val, lbl]) => (
                                 <div key={lbl}>
                                     <div className="text-2xl font-bold text-white">{val}</div>
                                     <div className="text-sm text-white/50">{lbl}</div>

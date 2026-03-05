@@ -3,10 +3,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Send, CheckCircle } from "lucide-react";
+import { useSiteSettings } from "@/lib/settings";
 
 export default function NewsletterSection() {
     const [email, setEmail] = useState("");
     const [submitted, setSubmitted] = useState(false);
+    const settings = useSiteSettings();
+
+    if (!settings.newsletter.show) return null;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,8 +33,8 @@ export default function NewsletterSection() {
                     <div className="w-14 h-14 bg-blue/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <Mail size={24} className="text-blue" />
                     </div>
-                    <h2 className="text-3xl lg:text-4xl font-bold text-white mb-3">Dapatkan Penawaran Eksklusif</h2>
-                    <p className="text-white/60 mb-8">Daftar newsletter kami dan dapatkan promo, tips wisata, dan penawaran eksklusif langsung di inbox Anda.</p>
+                    <h2 className="text-3xl lg:text-4xl font-bold text-white mb-3">{settings.newsletter.title}</h2>
+                    <p className="text-white/60 mb-8">{settings.newsletter.subtitle}</p>
 
                     {submitted ? (
                         <div className="flex items-center justify-center gap-2 text-emerald-400 font-semibold">

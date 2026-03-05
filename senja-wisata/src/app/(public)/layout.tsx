@@ -1,11 +1,14 @@
+"use client";
+
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import LiveChatWidget from "@/components/ui/LiveChatWidget";
 import Script from "next/script";
+import { SiteSettingsProvider } from "@/lib/settings";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
     return (
-        <>
+        <SiteSettingsProvider>
             <Navbar />
             <main>{children}</main>
             <Footer />
@@ -20,6 +23,6 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
                 strategy="lazyOnload"
             />
-        </>
+        </SiteSettingsProvider>
     );
 }

@@ -1,15 +1,18 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { motion, useInView, useMotionValue, useSpring, animate } from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
 import { Compass, Package, Users, Star } from "lucide-react";
+import { useSiteSettings } from "@/lib/settings";
 
-const statItems = [
-    { icon: Compass, value: 120, suffix: "+", label: "Destinasi", color: "text-blue" },
-    { icon: Package, value: 500, suffix: "+", label: "Paket Wisata", color: "text-accent" },
-    { icon: Users, value: 15000, suffix: "+", label: "Happy Travelers", color: "text-emerald-500" },
-    { icon: Star, value: 4.9, suffix: "★", label: "Rating Rata-rata", color: "text-amber-400", decimal: true },
-];
+const icons = [Compass, Package, Users, Star];
+const colors = ["text-blue", "text-accent", "text-emerald-500", "text-amber-400"];
+
+function parseValue(val: string): { num: number; decimal: boolean } {
+    const cleaned = val.replace(/[^\d.,]/g, "").replace(",", ".");
+    const num = parseFloat(cleaned) || 0;
+    return { num, decimal: cleaned.includes(".") };
+}
 
 function CountUp({ value, suffix, decimal }: { value: number; suffix: string; decimal?: boolean }) {
     const ref = useRef<HTMLSpanElement>(null);
@@ -37,6 +40,23 @@ function CountUp({ value, suffix, decimal }: { value: number; suffix: string; de
 export default function StatsBar() {
     const ref = useRef(null);
     const inView = useInView(ref, { once: true });
+    const settings = useSiteSettings();
+
+    const statItems = [1, 2, 3, 4].map((n, i) => {
+        const value = settings.stats[`stat${n}Value` as keyof typeof settings.stats];
+        const label = settings.stats[`stat${n}Label` as keyof typeof settings.stats];
+        const suffixMatch = value.match(/[^\d.,]+$/);
+        const suffix = suffixMatch ? suffixMatch[0] : "";
+        const parsed = parseValue(value);
+        return {
+            icon: icons[i],
+            value: parsed.num,
+            suffix: suffix || "+",
+            label,
+            color: colors[i],
+            decimal: parsed.decimal,
+        };
+    });
 
     return (
         <section ref={ref} className="bg-white border-y border-slate-100 py-8">

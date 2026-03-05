@@ -74,12 +74,26 @@ export default function SettingsPage() {
     const [hasChanges, setHasChanges] = useState(false);
 
     useEffect(() => {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            try {
-                setSettings(JSON.parse(stored));
-            } catch { /* ignore */ }
-        }
+        // Load from API first, fallback to localStorage
+        fetch("/api/settings")
+            .then(r => r.json())
+            .then(data => {
+                if (data.settings) {
+                    setSettings(prev => ({ ...prev, ...data.settings }));
+                } else {
+                    // Fallback to localStorage
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (stored) {
+                        try { setSettings(JSON.parse(stored)); } catch { /* ignore */ }
+                    }
+                }
+            })
+            .catch(() => {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    try { setSettings(JSON.parse(stored)); } catch { /* ignore */ }
+                }
+            });
     }, []);
 
     const updateSetting = (section: keyof SettingsData, key: string, value: string | boolean) => {
@@ -90,11 +104,29 @@ export default function SettingsPage() {
         setHasChanges(true);
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        // Save to both API and localStorage
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-        setSaved(true);
-        setHasChanges(false);
-        setTimeout(() => setSaved(false), 3000);
+        try {
+            const res = await fetch("/api/settings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ settings }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setSaved(true);
+                setHasChanges(false);
+                setTimeout(() => setSaved(false), 3000);
+            } else {
+                alert("Gagal menyimpan: " + (data.error || "Unknown error"));
+            }
+        } catch {
+            // Fallback: at least saved to localStorage
+            setSaved(true);
+            setHasChanges(false);
+            setTimeout(() => setSaved(false), 3000);
+        }
     };
 
     const handleReset = () => {
@@ -153,8 +185,8 @@ export default function SettingsPage() {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all text-left ${activeTab === tab.id
-                                            ? "text-white"
-                                            : "text-slate-500 hover:bg-slate-100"
+                                        ? "text-white"
+                                        : "text-slate-500 hover:bg-slate-100"
                                         }`}
                                     style={activeTab === tab.id ? { backgroundColor: '#05073C' } : {}}
                                 >

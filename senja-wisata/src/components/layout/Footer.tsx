@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin, Phone, Mail, Instagram, Facebook, Youtube, Twitter } from "lucide-react";
+import { useSiteSettings } from "@/lib/settings";
 
 const footerLinks = {
     paketWisata: [
@@ -25,14 +28,15 @@ const footerLinks = {
     ],
 };
 
-const socials = [
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Youtube, href: "#", label: "YouTube" },
-    { icon: Twitter, href: "#", label: "Twitter/X" },
+const socialIcons = [
+    { key: "instagram", icon: Instagram, label: "Instagram" },
+    { key: "facebook", icon: Facebook, label: "Facebook" },
+    { key: "youtube", icon: Youtube, label: "YouTube" },
+    { key: "twitter", icon: Twitter, label: "Twitter/X" },
 ];
 
 export default function Footer() {
+    const settings = useSiteSettings();
     return (
         <footer className="text-white" style={{ backgroundColor: '#05073C' }}>
             <div className="container py-10 md:py-16">
@@ -51,7 +55,7 @@ export default function Footer() {
                             </svg>
                             <div>
                                 <div className="font-bold text-lg text-white">Senja Wisata</div>
-                                <div className="text-[10px] text-white/50">PT. Senja Wisata Indonesia</div>
+                                <div className="text-[10px] text-white/50">{settings.company.name}</div>
                             </div>
                         </Link>
                         <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-xs hidden md:block">
@@ -60,16 +64,16 @@ export default function Footer() {
                         <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs md:text-sm text-white/60 md:flex-col md:gap-3">
                             <a href="https://maps.google.com" className="flex items-center gap-1.5 hover:text-blue transition-colors">
                                 <MapPin size={13} className="text-blue shrink-0" />
-                                <span className="hidden md:inline">Jl. Wisata Indah No. 12, Jakarta Selatan 12345</span>
+                                <span className="hidden md:inline">{settings.company.address}</span>
                                 <span className="md:hidden">Jakarta Selatan</span>
                             </a>
-                            <a href="tel:+628123456789" className="flex items-center gap-1.5 hover:text-blue transition-colors">
+                            <a href={`tel:${settings.company.phone.replace(/[\s-]/g, "")}`} className="flex items-center gap-1.5 hover:text-blue transition-colors">
                                 <Phone size={13} className="text-blue shrink-0" />
-                                +62 812-3456-7890
+                                {settings.company.phone}
                             </a>
-                            <a href="mailto:info@senjawisata.com" className="flex items-center gap-1.5 hover:text-blue transition-colors">
+                            <a href={`mailto:${settings.company.email}`} className="flex items-center gap-1.5 hover:text-blue transition-colors">
                                 <Mail size={13} className="text-blue shrink-0" />
-                                info@senjawisata.com
+                                {settings.company.email}
                             </a>
                         </div>
                     </div>
@@ -96,13 +100,13 @@ export default function Footer() {
                 {/* Bottom bar */}
                 <div className="border-t border-white/10 mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col sm:flex-row justify-between items-center gap-3">
                     <p className="text-xs md:text-sm text-white/40">
-                        © 2025 PT. Senja Wisata Indonesia. All rights reserved.
+                        {settings.company.copyright}
                     </p>
                     <div className="flex items-center gap-2">
-                        {socials.map((s) => (
+                        {socialIcons.map((s) => (
                             <a
                                 key={s.label}
-                                href={s.href}
+                                href={settings.social[s.key as keyof typeof settings.social] || "#"}
                                 aria-label={s.label}
                                 className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/10 hover:bg-blue flex items-center justify-center text-white/60 hover:text-white transition-all duration-200"
                             >
