@@ -42,6 +42,19 @@ export default function AdminBookingsPage() {
 
     // Fetch real bookings from API and merge with dummy data
     useEffect(() => {
+        const autoCompleteBookings = (list: Booking[]): Booking[] => {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            return list.map(b => {
+                if (b.status === "confirmed") {
+                    const tripDate = new Date(b.date);
+                    tripDate.setHours(23, 59, 59, 999);
+                    if (tripDate < now) return { ...b, status: "completed" };
+                }
+                return b;
+            });
+        };
+
         fetch("/api/booking/all")
             .then(r => r.json())
             .then(data => {
@@ -58,13 +71,16 @@ export default function AdminBookingsPage() {
                         payment_status: (b.payment_status as string) || "pending",
                         created: (b.created_at as string) || "",
                     }));
-                    // Merge: real bookings first, then dummy ones not already present
                     const realIds = new Set(realBookings.map(b => b.id));
                     const merged = [...realBookings, ...initialBookings.filter(b => !realIds.has(b.id))];
-                    setBookings(merged);
+                    setBookings(autoCompleteBookings(merged));
+                } else {
+                    setBookings(autoCompleteBookings(initialBookings));
                 }
             })
-            .catch(() => { });
+            .catch(() => {
+                setBookings(autoCompleteBookings(initialBookings));
+            });
     }, []);
 
     const filtered = bookings.filter((b) => {
@@ -202,12 +218,7 @@ export default function AdminBookingsPage() {
                                                         className="btn btn-sm text-xs bg-red-50 text-red-500 border-red-200 hover:bg-red-100">Tolak</button>
                                                 </>
                                             )}
-                                            {b.status === "confirmed" && (
-                                                <button onClick={() => updateStatus(b.id, "completed")}
-                                                    className="btn btn-sm text-xs gap-1 text-white border-0" style={{ backgroundColor: '#05073C' }}>
-                                                    <CheckSquare size={12} /> Selesai
-                                                </button>
-                                            )}
+
                                         </div>
                                     </td>
                                 </tr>
@@ -294,13 +305,7 @@ export default function AdminBookingsPage() {
                                     </button>
                                 </div>
                             )}
-                            {detailBooking.status === "confirmed" && (
-                                <button onClick={() => updateStatus(detailBooking.id, "completed")}
-                                    className="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
-                                    style={{ backgroundColor: '#05073C' }}>
-                                    Tandai Selesai
-                                </button>
-                            )}
+
                         </div>
                     </div>
                 </div>

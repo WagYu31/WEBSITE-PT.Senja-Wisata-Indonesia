@@ -326,23 +326,30 @@ export default function TourDetailPage({ params }: Props) {
                             </div>
 
                             {/* Guests */}
-                            {[["Dewasa", adults, setAdults], ["Anak (50%)", children, setChildren]].map(([label, count, setCount]) => (
-                                <div key={label as string} className="flex items-center justify-between mb-4">
-                                    <div>
-                                        <div className="font-semibold text-sm text-primary">{label as string}</div>
-                                        <div className="text-xs text-slate-400">{label === "Dewasa" ? "12+ tahun" : "< 12 tahun"}</div>
+                            {[["Dewasa", adults, setAdults], ["Anak (50%)", children, setChildren]].map(([label, count, setCount]) => {
+                                const totalPax = adults + children;
+                                const isMaxed = totalPax >= tour.maxPax;
+                                return (
+                                    <div key={label as string} className="flex items-center justify-between mb-4">
+                                        <div>
+                                            <div className="font-semibold text-sm text-primary">{label as string}</div>
+                                            <div className="text-xs text-slate-400">{label === "Dewasa" ? "12+ tahun" : "< 12 tahun"}</div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button onClick={() => (setCount as any)(Math.max(label === "Dewasa" ? 1 : 0, (count as number) - 1))} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50">
+                                                <Minus size={14} />
+                                            </button>
+                                            <span className="w-6 text-center font-bold">{count as number}</span>
+                                            <button onClick={() => { if (!isMaxed) (setCount as any)((count as number) + 1); }} disabled={isMaxed} className={`w-8 h-8 rounded-full border flex items-center justify-center ${isMaxed ? "border-slate-100 text-slate-300 cursor-not-allowed" : "border-slate-200 hover:bg-slate-50"}`}>
+                                                <Plus size={14} />
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <button onClick={() => (setCount as any)(Math.max(label === "Dewasa" ? 1 : 0, (count as number) - 1))} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50">
-                                            <Minus size={14} />
-                                        </button>
-                                        <span className="w-6 text-center font-bold">{count as number}</span>
-                                        <button onClick={() => (setCount as any)((count as number) + 1)} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50">
-                                            <Plus size={14} />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
+                            {adults + children >= tour.maxPax && (
+                                <p className="text-xs text-amber-600 -mt-2 mb-3">⚠️ Maksimal {tour.maxPax} peserta per booking</p>
+                            )}
 
                             {/* Price breakdown */}
                             <div className="border-t border-slate-100 pt-4 mb-4 text-sm space-y-2">

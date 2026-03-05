@@ -19,6 +19,28 @@ export async function GET(req: NextRequest) {
             [userId]
         );
 
+        // Auto-complete: confirmed bookings with past trip dates → completed
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const toAutoComplete = bookings.filter((b: RowDataPacket) => {
+            if (b.status !== "confirmed") return false;
+            const tripDate = new Date(b.travel_date);
+            tripDate.setHours(23, 59, 59, 999);
+            return tripDate < now;
+        });
+        if (toAutoComplete.length > 0) {
+            const ids = toAutoComplete.map((r: RowDataPacket) => r.id);
+            await db.query(
+                `UPDATE bookings SET status = 'completed' WHERE id IN (${ids.map(() => '?').join(',')})`,
+                ids
+            );
+            for (const b of bookings as RowDataPacket[]) {
+                if (toAutoComplete.some((r: RowDataPacket) => r.id === b.id)) {
+                    b.status = "completed";
+                }
+            }
+        }
+
         // Get stats
         const totalTrips = bookings.length;
         const upcomingTrips = bookings.filter(
