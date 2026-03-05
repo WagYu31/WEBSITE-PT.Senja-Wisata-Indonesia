@@ -12,9 +12,25 @@ export default function NewsletterSection() {
 
     if (!settings.newsletter.show) return null;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (email) { setSubmitted(true); setEmail(""); }
+        if (!email) return;
+        try {
+            const res = await fetch("/api/newsletter", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setSubmitted(true);
+                setEmail("");
+            } else {
+                alert(data.error || "Gagal mendaftar");
+            }
+        } catch {
+            alert("Gagal mendaftar newsletter");
+        }
     };
 
     return (

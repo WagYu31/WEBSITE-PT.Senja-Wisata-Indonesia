@@ -6,7 +6,7 @@ import { useAuthStore } from "@/store/auth";
 import { useEffect, useState, useCallback } from "react";
 import {
     LayoutDashboard, Package, BookOpen, Users,
-    LogOut, ChevronRight, Menu, X, Bell, Crown, Settings, MessageSquare
+    LogOut, ChevronRight, Menu, X, Bell, Crown, Settings, MessageSquare, Mail
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,7 @@ const navItems = [
     { href: "/admin/bookings", label: "Kelola Booking", icon: BookOpen, exact: false },
     { href: "/admin/users", label: "Kelola Users", icon: Users, exact: false },
     { href: "/admin/chats", label: "Live Chat", icon: MessageSquare, exact: false },
+    { href: "/admin/newsletter", label: "Newsletter", icon: Mail, exact: false },
     { href: "/admin/settings", label: "Pengaturan Web", icon: Settings, exact: false },
 ];
 
