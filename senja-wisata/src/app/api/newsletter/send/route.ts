@@ -3,15 +3,20 @@ import { db } from "@/lib/db";
 import { RowDataPacket } from "mysql2";
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 465,
-    secure: true,
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
-});
+function createTransporter() {
+    const host = process.env.SMTP_HOST || "mail.fluentlya.com";
+    const port = Number(process.env.SMTP_PORT) || 465;
+    const user = process.env.SMTP_USER || "adminsenja@fluentlya.com";
+    const pass = "SenjaWisata2026";
+
+    return nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465,
+        auth: { user, pass },
+        tls: { rejectUnauthorized: false },
+    });
+}
 
 // POST: Send newsletter to all active subscribers
 export async function POST(req: NextRequest) {
@@ -29,6 +34,22 @@ export async function POST(req: NextRequest) {
 
         if (rows.length === 0) {
             return NextResponse.json({ error: "Tidak ada subscriber aktif", sent: 0 }, { status: 400 });
+        }
+
+        const transporter = createTransporter();
+
+        // Verify SMTP connection first
+        try {
+            await transporter.verify();
+            console.log("[SMTP] Connection verified OK");
+        } catch (verifyErr) {
+            console.error("[SMTP] Verify failed:", verifyErr);
+            return NextResponse.json({
+                error: "SMTP connection gagal: " + String(verifyErr),
+                smtpHost: process.env.SMTP_HOST,
+                smtpPort: process.env.SMTP_PORT,
+                smtpUser: process.env.SMTP_USER,
+            }, { status: 500 });
         }
 
         const emails = rows.map((r) => r.email);
@@ -71,6 +92,7 @@ export async function POST(req: NextRequest) {
                 } catch (err) {
                     failed++;
                     errors.push(`${email}: ${String(err)}`);
+                    console.error(`[SMTP] Send failed to ${email}:`, err);
                 }
             });
             await Promise.all(promises);
@@ -96,11 +118,12 @@ export async function POST(req: NextRequest) {
         } catch { /* log failure is non-critical */ }
 
         return NextResponse.json({
-            success: true,
+            success: sent > 0,
             message: `Newsletter terkirim ke ${sent} subscriber${failed > 0 ? `, ${failed} gagal` : ""}`,
             sent,
             failed,
             total: emails.length,
+            errors: errors.length > 0 ? errors : undefined,
         });
     } catch (err) {
         console.error("[Newsletter] Send error:", err);
