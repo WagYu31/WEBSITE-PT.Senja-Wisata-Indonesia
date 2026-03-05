@@ -26,6 +26,7 @@ export async function GET() {
             `SELECT b.*, 
                     t.title as tour_title, 
                     t.location as tour_location,
+                    t.departure_time as tour_departure_time,
                     u.name as user_name,
                     u.email as user_email
              FROM bookings b 

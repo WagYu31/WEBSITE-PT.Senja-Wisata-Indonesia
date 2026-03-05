@@ -13,6 +13,7 @@ type Booking = {
   tour_location?: string;
   tour_image?: string;
   tour_date: string;
+  tour_departure_time?: string;
   guests: number;
   adults: number;
   children: number;
@@ -36,7 +37,7 @@ export default function ETicketModal({ booking, userName, userEmail, onClose }: 
   const tourDate = new Date(booking.tour_date);
   const formattedDate = tourDate.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
   const staticTour = staticTours.find(t => t.id === booking.tour_id);
-  const departureTime = staticTour?.departureTime || "08:00 WIB";
+  const departureTime = booking.tour_departure_time || staticTour?.departureTime || "08:00 WIB";
 
   const handlePrint = () => {
     setPrinting(true);

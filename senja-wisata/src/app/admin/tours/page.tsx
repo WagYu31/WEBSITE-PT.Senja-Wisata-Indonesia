@@ -5,7 +5,7 @@ import { tours as staticTours } from "@/lib/data";
 import { formatPrice } from "@/lib/utils";
 import { Plus, Search, Edit2, Trash2, Eye, Star, MapPin, Clock, X, Package } from "lucide-react";
 
-type Tour = typeof staticTours[0] & { status?: string };
+type Tour = typeof staticTours[0] & { status?: string; is_active?: boolean };
 
 const categoryOptions = ["Semua", "Beach", "Culture", "Adventure", "Family", "Honeymoon", "International"];
 const allCategories = ["Beach", "Culture", "Adventure", "Family", "Honeymoon", "International"];
@@ -50,8 +50,9 @@ export default function AdminToursPage() {
                         originalPrice: t.originalPrice || undefined,
                         slug: t.slug || "",
                         departureTime: (t as Tour & { departure_time?: string }).departure_time || t.departureTime || "08:00 WIB",
+                        is_active: (t as Tour & { is_active?: number | boolean }).is_active !== undefined ? Boolean((t as Tour & { is_active?: number | boolean }).is_active) : true,
                     })),
-                    ...staticTours.filter(t => !dbIds.has(t.id)),
+                    ...staticTours.filter(t => !dbIds.has(t.id)).map(t => ({ ...t, is_active: true })),
                 ];
                 setTourList(merged);
             }
@@ -157,6 +158,22 @@ export default function AdminToursPage() {
         setTimeout(() => setSuccessMsg(""), 3000);
     };
 
+    const toggleActive = async (tour: Tour) => {
+        const newStatus = !tour.is_active;
+        setTourList(prev => prev.map(t => t.id === tour.id ? { ...t, is_active: newStatus } : t));
+        try {
+            await fetch("/api/tours/toggle", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: tour.id, is_active: newStatus }),
+            });
+            showSuccess(newStatus ? `"${tour.title}" diaktifkan!` : `"${tour.title}" dinonaktifkan.`);
+        } catch {
+            setTourList(prev => prev.map(t => t.id === tour.id ? { ...t, is_active: !newStatus } : t));
+            showSuccess("Gagal mengubah status tour.");
+        }
+    };
+
     return (
         <div className="space-y-6">
             {/* Success toast */}
@@ -233,7 +250,12 @@ export default function AdminToursPage() {
                                     </span>
                                 </td>
                                 <td className="p-4">
-                                    <span className="badge badge-success">Aktif</span>
+                                    <button onClick={() => toggleActive(tour)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${tour.is_active !== false ? 'bg-emerald-500' : 'bg-slate-300'}`}>
+                                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow ${tour.is_active !== false ? 'translate-x-6' : 'translate-x-1'}`} />
+                                    </button>
+                                    <div className={`text-xs mt-0.5 font-semibold ${tour.is_active !== false ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                        {tour.is_active !== false ? 'Aktif' : 'Nonaktif'}
+                                    </div>
                                 </td>
                                 <td className="p-4">
                                     <div className="flex items-center gap-1">

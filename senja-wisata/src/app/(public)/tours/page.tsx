@@ -17,13 +17,21 @@ export default function ToursPage() {
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000000]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [dbTours, setDbTours] = useState<Tour[]>([]);
+    const [inactiveIds, setInactiveIds] = useState<Set<number>>(new Set());
 
     useEffect(() => {
         fetch("/api/tours")
             .then(r => r.json())
             .then(data => {
                 if (data.tours?.length) {
-                    setDbTours(data.tours.map((t: Tour & Record<string, unknown>) => ({
+                    // Track inactive IDs to hide static tours too
+                    const inactive = new Set<number>();
+                    data.tours.forEach((t: Tour & { is_active?: number | boolean }) => {
+                        if (t.is_active !== undefined && !Boolean(t.is_active)) inactive.add(t.id);
+                    });
+                    setInactiveIds(inactive);
+
+                    setDbTours(data.tours.filter((t: Tour & { is_active?: number | boolean }) => t.is_active === undefined || Boolean(t.is_active)).map((t: Tour & Record<string, unknown>) => ({
                         id: t.id,
                         slug: t.slug || String(t.id),
                         title: t.title,
@@ -49,12 +57,13 @@ export default function ToursPage() {
             .catch(() => { });
     }, []);
 
-    // Merge: static + DB-only tours
+    // Merge: static (excluding inactive) + DB-only active tours
     const allTours = useMemo(() => {
         const staticIds = new Set(staticTours.map(t => t.id));
         const extraTours = dbTours.filter(t => !staticIds.has(t.id));
-        return [...staticTours, ...extraTours];
-    }, [dbTours]);
+        const activeStaticTours = staticTours.filter(t => !inactiveIds.has(t.id));
+        return [...activeStaticTours, ...extraTours];
+    }, [dbTours, inactiveIds]);
 
     const filtered = useMemo(() => {
         let result = [...allTours];

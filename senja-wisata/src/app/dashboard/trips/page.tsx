@@ -34,6 +34,7 @@ type Booking = {
     tour_location?: string;
     tour_image?: string;
     tour_date: string;
+    tour_departure_time?: string;
     guests: number;
     adults: number;
     children: number;

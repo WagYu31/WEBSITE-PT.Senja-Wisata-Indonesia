@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: "userId diperlukan" }, { status: 400 });
     try {
         const [rows] = await db.query<RowDataPacket[]>(
-            `SELECT b.*, t.title as tour_title, t.location as tour_location 
+            `SELECT b.*, t.title as tour_title, t.location as tour_location, t.departure_time as tour_departure_time 
              FROM bookings b 
              LEFT JOIN tours t ON b.tour_id = t.id 
              WHERE b.user_id = ? 
