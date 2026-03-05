@@ -82,7 +82,12 @@ export default function TourDetailPage({ params }: Props) {
             }
             if (!p.birthDate) errors.push(`Tanggal lahir peserta ${i + 1} wajib diisi`);
         });
-        if (!contactPhone.trim()) errors.push("No. HP pemesan wajib diisi");
+        const phoneDigits = contactPhone.replace(/\D/g, '');
+        if (!contactPhone.trim()) {
+            errors.push("No. HP pemesan wajib diisi");
+        } else if (phoneDigits.length < 11 || phoneDigits.length > 13) {
+            errors.push("No. HP harus 11-13 digit");
+        }
         setFormErrors(errors);
         return errors.length === 0;
     };
@@ -425,10 +430,16 @@ export default function TourDetailPage({ params }: Props) {
                                         <input
                                             type="tel"
                                             value={contactPhone}
-                                            onChange={e => setContactPhone(e.target.value)}
+                                            onChange={e => {
+                                                const val = e.target.value.replace(/[^0-9+\-\s]/g, '');
+                                                const digits = val.replace(/\D/g, '');
+                                                if (digits.length <= 13) setContactPhone(val);
+                                            }}
                                             placeholder="+62 812-xxxx-xxxx"
+                                            maxLength={16}
                                             className="form-input text-sm"
                                         />
+                                        <p className="text-[10px] text-slate-400 mt-0.5">Minimal 11 digit, maksimal 13 digit</p>
                                     </div>
                                 </div>
                             </div>
