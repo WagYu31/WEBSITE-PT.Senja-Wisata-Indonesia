@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { RowDataPacket } from "mysql2";
+import { tours } from "@/lib/data";
+
+// Helper: check if a confirmed booking should be auto-completed
+function shouldAutoComplete(tourDate: string | Date, tourTitle?: string): boolean {
+    const tripDate = new Date(tourDate);
+    const tour = tours.find(t => t.title === tourTitle);
+    const depTimeStr = tour?.departureTime || "08:00 WIB";
+    const hourMatch = depTimeStr.match(/(\d{1,2}):(\d{2})/);
+    const depHour = hourMatch ? parseInt(hourMatch[1]) : 8;
+    const depMin = hourMatch ? parseInt(hourMatch[2]) : 0;
+    tripDate.setHours(depHour + 2, depMin, 0, 0);
+    return new Date() > tripDate;
+}
 
 export async function GET(req: NextRequest) {
     try {
@@ -19,14 +32,10 @@ export async function GET(req: NextRequest) {
             [userId]
         );
 
-        // Auto-complete: confirmed bookings with past trip dates → completed
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
+        // Auto-complete: confirmed bookings past departure time + 2h → completed
         const toAutoComplete = bookings.filter((b: RowDataPacket) => {
             if (b.status !== "confirmed") return false;
-            const tripDate = new Date(b.travel_date);
-            tripDate.setHours(23, 59, 59, 999);
-            return tripDate < now;
+            return shouldAutoComplete(b.travel_date, b.tour_title);
         });
         if (toAutoComplete.length > 0) {
             const ids = toAutoComplete.map((r: RowDataPacket) => r.id);

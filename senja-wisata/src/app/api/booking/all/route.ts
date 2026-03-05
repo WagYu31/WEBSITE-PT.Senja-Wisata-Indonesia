@@ -2,6 +2,22 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { RowDataPacket } from "mysql2";
 import { bookingStore } from "@/lib/bookingStore";
+import { tours } from "@/lib/data";
+
+// Helper: check if a confirmed booking should be auto-completed
+// Logic: 2 hours after departure time on the trip date
+function shouldAutoComplete(tourDate: string | Date, tourTitle?: string): boolean {
+    const tripDate = new Date(tourDate);
+    // Find departure time from static tours data
+    const tour = tours.find(t => t.title === tourTitle);
+    const depTimeStr = tour?.departureTime || "08:00 WIB"; // default 08:00
+    const hourMatch = depTimeStr.match(/(\d{1,2}):(\d{2})/);
+    const depHour = hourMatch ? parseInt(hourMatch[1]) : 8;
+    const depMin = hourMatch ? parseInt(hourMatch[2]) : 0;
+    // Set trip completion time = trip date + departure hour + 2 hours buffer
+    tripDate.setHours(depHour + 2, depMin, 0, 0);
+    return new Date() > tripDate;
+}
 
 // GET: Fetch ALL bookings (for admin use)
 export async function GET() {
@@ -18,14 +34,10 @@ export async function GET() {
              ORDER BY b.created_at DESC`
         );
 
-        // Auto-complete: update confirmed bookings with past trip dates to "completed"
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
+        // Auto-complete: confirmed bookings past departure time + 2h → completed
         const toAutoComplete = (rows as RowDataPacket[]).filter(r => {
             if (r.status !== "confirmed") return false;
-            const tripDate = new Date(r.tour_date);
-            tripDate.setHours(23, 59, 59, 999);
-            return tripDate < now;
+            return shouldAutoComplete(r.tour_date, r.tour_title);
         });
 
         if (toAutoComplete.length > 0) {
@@ -34,7 +46,6 @@ export async function GET() {
                 `UPDATE bookings SET status = 'completed' WHERE id IN (${ids.map(() => '?').join(',')})`,
                 ids
             );
-            // Update the rows in memory too
             for (const row of rows as RowDataPacket[]) {
                 if (toAutoComplete.some(r => r.id === row.id)) {
                     row.status = "completed";

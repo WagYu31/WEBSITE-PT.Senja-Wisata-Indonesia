@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { formatPrice } from "@/lib/utils";
+import { tours as toursData } from "@/lib/data";
 import { Search, Clock, CheckCircle, XCircle, Package, X, User, MapPin, Calendar, Users, CheckSquare } from "lucide-react";
 
 type Booking = {
@@ -44,12 +45,17 @@ export default function AdminBookingsPage() {
     useEffect(() => {
         const autoCompleteBookings = (list: Booking[]): Booking[] => {
             const now = new Date();
-            now.setHours(0, 0, 0, 0);
             return list.map(b => {
                 if (b.status === "confirmed") {
                     const tripDate = new Date(b.date);
-                    tripDate.setHours(23, 59, 59, 999);
-                    if (tripDate < now) return { ...b, status: "completed" };
+                    // Find departure time from static tours data
+                    const tour = toursData.find(t => t.title === b.tour);
+                    const depTimeStr = tour?.departureTime || "08:00 WIB";
+                    const hourMatch = depTimeStr.match(/(\d{1,2}):(\d{2})/);
+                    const depHour = hourMatch ? parseInt(hourMatch[1]) : 8;
+                    const depMin = hourMatch ? parseInt(hourMatch[2]) : 0;
+                    tripDate.setHours(depHour + 2, depMin, 0, 0);
+                    if (now > tripDate) return { ...b, status: "completed" };
                 }
                 return b;
             });
