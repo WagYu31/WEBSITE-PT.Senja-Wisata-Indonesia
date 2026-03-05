@@ -108,48 +108,26 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Rating harus 1-5" }, { status: 400 });
         }
 
-        try {
-            await ensureTable();
+        await ensureTable();
 
-            // Check if review already exists for this booking
-            const [existing] = await db.query<RowDataPacket[]>(
-                "SELECT id FROM reviews WHERE booking_id = ?",
-                [bookingId]
-            );
-            if (existing.length > 0) {
-                return NextResponse.json({ error: "Review untuk booking ini sudah ada" }, { status: 409 });
-            }
-
-            await db.query(
-                `INSERT INTO reviews (user_id, user_name, tour_id, tour_title, booking_id, rating, comment)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                [userId, userName || "Guest", tourId, tourTitle || "", bookingId, rating, comment || ""]
-            );
-
-            return NextResponse.json({ success: true, message: "Review berhasil disimpan" });
-        } catch {
-            // In-memory fallback
-            const existingMem = reviewStore.find(r => r.booking_id === String(bookingId));
-            if (existingMem) {
-                return NextResponse.json({ error: "Review untuk booking ini sudah ada" }, { status: 409 });
-            }
-
-            reviewStore.push({
-                id: g.__reviewNextId!++,
-                user_id: Number(userId),
-                user_name: userName || "Guest",
-                tour_id: Number(tourId),
-                tour_title: tourTitle || "",
-                booking_id: String(bookingId),
-                rating: Number(rating),
-                comment: comment || "",
-                created_at: new Date().toISOString(),
-            });
-
-            return NextResponse.json({ success: true, message: "Review berhasil disimpan" });
+        // Check if review already exists for this booking
+        const [existing] = await db.query<RowDataPacket[]>(
+            "SELECT id FROM reviews WHERE booking_id = ?",
+            [String(bookingId)]
+        );
+        if (existing.length > 0) {
+            return NextResponse.json({ error: "Review untuk booking ini sudah ada" }, { status: 409 });
         }
+
+        await db.query(
+            `INSERT INTO reviews (user_id, user_name, tour_id, tour_title, booking_id, rating, comment)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [userId, userName || "Guest", tourId, tourTitle || "", String(bookingId), rating, comment || ""]
+        );
+
+        return NextResponse.json({ success: true, message: "Review berhasil disimpan" });
     } catch (error: unknown) {
-        console.error("[Reviews] Error:", error);
+        console.error("[Reviews] POST Error:", error);
         const message = error instanceof Error ? error.message : "Gagal menyimpan review";
         return NextResponse.json({ error: message }, { status: 500 });
     }
