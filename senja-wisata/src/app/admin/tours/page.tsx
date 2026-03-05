@@ -10,7 +10,7 @@ type Tour = typeof staticTours[0] & { status?: string };
 const categoryOptions = ["Semua", "Beach", "Culture", "Adventure", "Family", "Honeymoon", "International"];
 const allCategories = ["Beach", "Culture", "Adventure", "Family", "Honeymoon", "International"];
 
-const emptyForm = { title: "", location: "", price: "", duration: "", category: "Beach", description: "", image: "", rating: "4.5", reviews: "0" };
+const emptyForm = { title: "", location: "", price: "", duration: "", category: "Beach", description: "", image: "", rating: "4.5", reviews: "0", departureTime: "08:00 WIB" };
 
 export default function AdminToursPage() {
     const [tourList, setTourList] = useState<Tour[]>(staticTours);
@@ -49,6 +49,7 @@ export default function AdminToursPage() {
                         rating: t.rating || 4.5,
                         originalPrice: t.originalPrice || undefined,
                         slug: t.slug || "",
+                        departureTime: (t as Tour & { departure_time?: string }).departure_time || t.departureTime || "08:00 WIB",
                     })),
                     ...staticTours.filter(t => !dbIds.has(t.id)),
                 ];
@@ -88,6 +89,7 @@ export default function AdminToursPage() {
             image: tour.image,
             rating: String(tour.rating),
             reviews: String(tour.reviews),
+            departureTime: (tour as Tour & { departureTime?: string; departure_time?: string }).departureTime || (tour as Tour & { departure_time?: string }).departure_time || "08:00 WIB",
         });
         setShowForm(true);
     };
@@ -304,6 +306,11 @@ export default function AdminToursPage() {
                                         {allCategories.map(c => <option key={c}>{c}</option>)}
                                     </select>
                                 </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-600 mb-1">Jam Keberangkatan</label>
+                                <input className="form-input w-full" placeholder="Contoh: 08:00 WIB" value={form.departureTime}
+                                    onChange={e => setForm(f => ({ ...f, departureTime: e.target.value }))} />
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-slate-600 mb-1">URL Foto</label>

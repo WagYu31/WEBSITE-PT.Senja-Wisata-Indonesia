@@ -19,7 +19,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { title, slug, location, duration, price, category, description, image } = body;
+        const { title, slug, location, duration, price, category, description, image, departureTime } = body;
 
         if (!title || !location || !price) {
             return NextResponse.json({ error: "title, location, price diperlukan" }, { status: 400 });
@@ -28,9 +28,9 @@ export async function POST(req: NextRequest) {
         const tourSlug = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
         const [result] = await db.query<ResultSetHeader>(
-            `INSERT INTO tours (title, slug, description, price, duration, location, category, image, max_pax, is_active)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 20, 1)`,
-            [title, tourSlug, description || "", price, duration || "", location, category || "Adventure", image || ""]
+            `INSERT INTO tours (title, slug, description, price, duration, location, category, image, departure_time, max_pax, is_active)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 20, 1)`,
+            [title, tourSlug, description || "", price, duration || "", location, category || "Adventure", image || "", departureTime || "08:00 WIB"]
         );
 
         return NextResponse.json({
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     try {
         const body = await req.json();
-        const { id, title, location, duration, price, category, description, image } = body;
+        const { id, title, location, duration, price, category, description, image, departureTime } = body;
 
         if (!id) {
             return NextResponse.json({ error: "id diperlukan" }, { status: 400 });
@@ -57,9 +57,9 @@ export async function PUT(req: NextRequest) {
         const tourSlug = title ? title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") : undefined;
 
         await db.query(
-            `UPDATE tours SET title=?, slug=?, description=?, price=?, duration=?, location=?, category=?, image=?
+            `UPDATE tours SET title=?, slug=?, description=?, price=?, duration=?, location=?, category=?, image=?, departure_time=?
              WHERE id=?`,
-            [title, tourSlug, description || "", price, duration || "", location, category || "Adventure", image || "", id]
+            [title, tourSlug, description || "", price, duration || "", location, category || "Adventure", image || "", departureTime || "08:00 WIB", id]
         );
 
         return NextResponse.json({ success: true, message: "Tour berhasil diperbarui" });

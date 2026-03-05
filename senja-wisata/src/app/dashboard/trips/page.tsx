@@ -386,7 +386,8 @@ export default function TripsPage() {
                                     </div>
 
                                     <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4">
-                                        <span className="flex items-center gap-1"><Calendar size={12} /> {b.tour_date}</span>
+                                        <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(b.tour_date).toLocaleDateString("id-ID")}</span>
+                                        {(() => { const t = staticTours.find(st => st.title === b.tour_title); return t?.departureTime ? <span className="flex items-center gap-1"><Clock size={12} /> Keberangkatan {t.departureTime}</span> : null; })()}
                                         <span className="flex items-center gap-1"><Users size={12} /> {b.guests} Orang</span>
                                         {b.adults > 0 && <span className="text-[10px] sm:text-xs text-slate-400">{b.adults} Dewasa{b.children > 0 ? `, ${b.children} Anak` : ""}</span>}
                                     </div>
