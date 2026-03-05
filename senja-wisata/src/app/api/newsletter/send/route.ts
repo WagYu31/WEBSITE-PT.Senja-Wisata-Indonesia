@@ -4,12 +4,10 @@ import { RowDataPacket } from "mysql2";
 import nodemailer from "nodemailer";
 
 function createTransporter() {
-    const host = process.env.SMTP_HOST || "mail.fluentlya.com";
-    const port = Number(process.env.SMTP_PORT) || 465;
-    const user = process.env.SMTP_USER || "adminsenja@fluentlya.com";
-    // Strip surrounding quotes from env var if present
-    const rawPass = process.env.SMTP_PASS || "";
-    const pass = rawPass.replace(/^['"]|['"]$/g, "");
+    const host = "mail.fluentlya.com";
+    const port = 465;
+    const user = "adminsenja@fluentlya.com";
+    const pass = "SenjaWisata2026";
 
     return nodemailer.createTransport({
         host,
