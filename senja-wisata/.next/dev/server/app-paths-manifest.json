@@ -1,0 +1,17 @@
+{
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(public)/page": "app/(public)/page.js",
+  "/(public)/tours/[slug]/page": "app/(public)/tours/[slug]/page.js",
+  "/(public)/tours/page": "app/(public)/tours/page.js",
+  "/admin/bookings/page": "app/admin/bookings/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/users/page": "app/admin/users/page.js",
+  "/api/booking/all/route": "app/api/booking/all/route.js",
+  "/api/booking/route": "app/api/booking/route.js",
+  "/api/booking/update-status/route": "app/api/booking/update-status/route.js",
+  "/api/chat/session/route": "app/api/chat/session/route.js",
+  "/api/reviews/route": "app/api/reviews/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/profile/page": "app/dashboard/profile/page.js",
+  "/dashboard/trips/page": "app/dashboard/trips/page.js"
+}

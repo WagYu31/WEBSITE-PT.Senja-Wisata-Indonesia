@@ -1,0 +1,10 @@
+var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/booking/update-status/route.js")
+R.c("server/chunks/node_modules_next_46254a43._.js")
+R.c("server/chunks/node_modules_mysql2_84e924d7._.js")
+R.c("server/chunks/node_modules_iconv-lite_a4444554._.js")
+R.c("server/chunks/node_modules_aws-ssl-profiles_lib_7ad223da._.js")
+R.c("server/chunks/node_modules_704376b9._.js")
+R.c("server/chunks/[root-of-the-server]__fef4d94c._.js")
+R.c("server/chunks/_next-internal_server_app_api_booking_update-status_route_actions_6338ad0a.js")
+R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/booking/update-status/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/booking/update-status/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

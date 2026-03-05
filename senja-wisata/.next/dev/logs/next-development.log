@@ -1,0 +1,152 @@
+[00:00:00.769] Server  LOG     ✓ Ready in 631ms
+[00:00:45.738] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:56.519] Browser WARN    Unable to access iframe: {}
+[00:00:57.368] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:01:03.922] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:05.113] Browser WARN    Unable to access iframe: {}
+[00:01:13.085] Browser WARN    Unable to access iframe: {}
+[00:01:22.621] Browser WARN    Unable to access iframe: {}
+[00:01:31.113] Browser WARN    Unable to access iframe: {}
+[00:01:46.010] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:47.255] Browser WARN    Unable to access iframe: {}
+[00:01:58.030] Browser WARN    Unable to access iframe: {}
+[00:02:04.022] Server  WARN    Image with src "https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:02:04.229] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:04.414] Browser WARN    Image with src "https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:02:04.414] Browser WARN    Image with src "https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=600&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:02:05.554] Browser WARN    Image with src "https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=600&q=80" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:02:09.767] Browser WARN    Unable to access iframe: {}
+[00:02:10.634] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:02:21.068] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:21.249] Browser WARN    Unable to access iframe: {}
+[00:02:32.366] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:02:33.343] Browser WARN    Unable to access iframe: {}
+[00:02:48.021] Browser WARN    Unable to access iframe: {}
+[00:02:48.021] Browser WARN    Unable to access iframe: {}
+[00:03:02.162] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:02.304] Browser WARN    Unable to access iframe: {}
+[00:03:13.873] Browser WARN    Unable to access iframe: {}
+[00:03:28.799] Browser WARN    Unable to access iframe: {}
+[00:03:29.627] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:03:41.673] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:41.847] Browser WARN    Image with src "https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:03:41.847] Browser WARN    Image with src "https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=600&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:03:43.041] Browser WARN    Image with src "https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=600&q=80" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:03:43.041] Browser WARN    Unable to access iframe: {}
+[00:04:04.886] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:04:05.841] Browser WARN    Unable to access iframe: {}
+[00:04:23.574] Browser WARN    Image with src "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:04:23.574] Browser WARN    Image with src "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=800&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:04:24.332] Browser WARN    Unable to access iframe: {}
+[00:04:46.452] Browser WARN    Unable to access iframe: {}
+[00:05:07.898] Browser WARN    Unable to access iframe: {}
+[00:05:29.376] Browser WARN    Unable to access iframe: {}
+[00:06:07.788] Browser WARN    Unable to access iframe: {}
+[00:06:37.710] Browser WARN    Unable to access iframe: {}
+[00:07:05.427] Browser WARN    Unable to access iframe: {}
+[00:07:34.337] Browser WARN    Unable to access iframe: {}
+[00:07:59.867] Browser WARN    Unable to access iframe: {}
+[00:07:59.867] Browser WARN    Unable to access iframe: {}
+[00:08:26.744] Browser WARN    Unable to access iframe: {}
+[00:08:52.861] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:08:53.115] Browser WARN    Image with src "https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=1920&q=80" is using quality "90" which is not configured in images.qualities [75]. Please update your config to [75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[00:08:53.115] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:08:53.115] Browser WARN    Image with src "https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=600&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:08:54.268] Browser WARN    Image with src "https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=600&q=80" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:08:54.436] Browser WARN    Unable to access iframe: {}
+[00:09:27.417] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:09:28.600] Browser WARN    Unable to access iframe: {}
+[00:09:57.375] Browser WARN    Unable to access iframe: {}
+[00:10:28.064] Browser WARN    Unable to access iframe: {}
+[00:10:28.907] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:10:55.467] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:57.055] Browser WARN    Unable to access iframe: {}
+[00:11:24.564] Browser WARN    Unable to access iframe: {}
+[00:11:52.002] Browser WARN    Unable to access iframe: {}
+[00:11:52.003] Browser WARN    Unable to access iframe: {}
+[00:12:18.247] Browser WARN    Unable to access iframe: {}
+[00:12:59.594] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:13:00.600] Browser WARN    Unable to access iframe: {}
+[00:13:00.600] Browser WARN    Unable to access iframe: {}
+[00:13:27.906] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:13:29.382] Browser WARN    Unable to access iframe: {}
+[00:13:56.012] Browser WARN    Unable to access iframe: {}
+[00:14:23.884] Server  LOG     [Update Status] BK-2025-041 → confirmed
+[00:14:24.994] Browser WARN    Unable to access iframe: {}
+[00:14:59.715] Browser WARN    Unable to access iframe: {}
+[00:15:29.612] Server  LOG     [Update Status] BK-2025-046 → completed
+[00:15:30.739] Browser WARN    Unable to access iframe: {}
+[00:16:09.559] Browser WARN    Unable to access iframe: {}
+[00:16:09.559] Browser WARN    Unable to access iframe: {}
+[00:16:43.416] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:16:44.550] Browser WARN    Unable to access iframe: {}
+[00:17:19.151] Browser WARN    Unable to access iframe: {}
+[00:17:59.781] Browser WARN    Unable to access iframe: {}
+[00:18:00.610] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:18:33.361] Browser WARN    Unable to access iframe: {}
+[00:19:07.157] Browser WARN    Unable to access iframe: {}
+[00:19:50.756] Browser WARN    Unable to access iframe: {}
+[00:20:19.093] Browser WARN    Image with src "https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=400&q=60" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:20:19.093] Browser WARN    Image with src "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=60" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:20:19.093] Browser WARN    Image with src "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=400&q=60" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:20:24.655] Browser WARN    Unable to access iframe: {}
+[00:20:59.924] Browser WARN    Unable to access iframe: {}
+[00:21:43.727] Browser WARN    Unable to access iframe: {}
+[00:22:22.856] Browser WARN    Unable to access iframe: {}
+[00:23:03.169] Browser WARN    Unable to access iframe: {}
+[00:23:40.430] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:23:41.599] Browser WARN    Unable to access iframe: {}
+[00:24:21.751] Browser WARN    Unable to access iframe: {}
+[00:24:22.598] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:24:56.222] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:24:57.782] Browser WARN    Unable to access iframe: {}
+[00:25:34.516] Browser WARN    Unable to access iframe: {}
+[00:26:14.940] Browser WARN    Unable to access iframe: {}
+[00:26:49.681] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:26:50.139] Browser WARN    Unable to access iframe: {}
+[00:27:40.298] Browser WARN    Unable to access iframe: {}
+[00:28:23.658] Browser WARN    Unable to access iframe: {}
+[00:29:11.169] Browser WARN    Unable to access iframe: {}
+[00:29:35.537] Browser WARN    Unable to access iframe: {}
+[00:29:51.182] Browser WARN    Unable to access iframe: {}
+[00:30:15.302] Browser WARN    Unable to access iframe: {}
+[00:30:36.347] Browser WARN    Unable to access iframe: {}
+[00:30:54.600] Browser WARN    Unable to access iframe: {}
+[00:30:54.600] Browser WARN    Unable to access iframe: {}
+[00:31:20.653] Browser WARN    Unable to access iframe: {}
+[00:31:40.763] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:31:47.400] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:31:48.582] Browser WARN    Unable to access iframe: {}
+[00:32:08.889] Browser WARN    Unable to access iframe: {}
+[00:32:27.275] Browser WARN    Unable to access iframe: {}
+[00:32:53.224] Browser WARN    Unable to access iframe: {}
+[00:33:14.328] Browser WARN    Unable to access iframe: {}
+[00:33:32.952] Browser WARN    Unable to access iframe: {}
+[00:33:32.952] Browser WARN    Unable to access iframe: {}
+[00:33:54.763] Browser WARN    Unable to access iframe: {}
+[00:33:54.763] Browser WARN    Unable to access iframe: {}
+[00:34:17.290] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:34:22.190] Browser WARN    Unable to access iframe: {}
+[00:35:27.637] Browser WARN    Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[00:35:28.161] Browser WARN    Unable to access iframe: {}
+[00:35:28.161] Browser WARN    Unable to access iframe: {}
+[00:36:19.287] Browser WARN    Unable to access iframe: {}
+[00:37:10.302] Browser WARN    Unable to access iframe: {}
+[00:37:57.684] Browser WARN    Unable to access iframe: {}
+[00:38:45.952] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:38:48.171] Browser WARN    Unable to access iframe: {}
+[00:38:48.171] Browser WARN    Unable to access iframe: {}
+[00:39:44.181] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:39:44.324] Browser WARN    Image with src "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:39:44.324] Browser WARN    Image with src "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=800&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:39:44.324] Browser WARN    Image with src "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:39:46.390] Browser WARN    Unable to access iframe: {}
+[00:39:46.390] Browser WARN    Unable to access iframe: {}

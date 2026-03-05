@@ -1,0 +1,13 @@
+var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/booking/cancel/route.js")
+R.c("server/chunks/node_modules_next_034de07c._.js")
+R.c("server/chunks/node_modules_mysql2_84e924d7._.js")
+R.c("server/chunks/node_modules_iconv-lite_a4444554._.js")
+R.c("server/chunks/node_modules_aws-ssl-profiles_lib_7ad223da._.js")
+R.c("server/chunks/node_modules_lodash_lodash_1b8cfecf.js")
+R.c("server/chunks/node_modules_mime-db_f53cdd2e._.js")
+R.c("server/chunks/node_modules_axios_dist_node_axios_cjs_ef84af05._.js")
+R.c("server/chunks/node_modules_aaab7c3d._.js")
+R.c("server/chunks/[root-of-the-server]__28388ed2._.js")
+R.c("server/chunks/_next-internal_server_app_api_booking_cancel_route_actions_2484d550.js")
+R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/booking/cancel/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/booking/cancel/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

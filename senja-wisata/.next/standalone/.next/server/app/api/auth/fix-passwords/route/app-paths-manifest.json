@@ -1,0 +1,3 @@
+{
+  "/api/auth/fix-passwords/route": "app/api/auth/fix-passwords/route.js"
+}
