@@ -28,17 +28,18 @@ export default function InstallPrompt() {
             return;
         }
 
-        // Detect iOS
+        // Detect platform
         const ua = navigator.userAgent;
         const isiOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
         setIsIOS(isiOS);
 
-        if (isiOS) {
-            // iOS doesn't support beforeinstallprompt
+        // Always show banner on mobile (iOS or Android)
+        if (isMobile) {
             setShowBanner(true);
         }
 
-        // Android / Chrome / Edge
+        // Listen for beforeinstallprompt (Chrome/Edge desktop & Android after criteria met)
         const handler = (e: Event) => {
             e.preventDefault();
             setDeferredPrompt(e as BeforeInstallPromptEvent);
@@ -59,6 +60,9 @@ export default function InstallPrompt() {
             }
             setDeferredPrompt(null);
         } else if (isIOS) {
+            setShowIOSGuide(true);
+        } else {
+            // Android without native prompt — show guide
             setShowIOSGuide(true);
         }
     };
@@ -113,18 +117,37 @@ export default function InstallPrompt() {
                         <h3 className="font-bold text-lg text-slate-800 mb-2">Install Senja Wisata</h3>
                         <p className="text-sm text-slate-500 mb-5">Tambahkan ke Home Screen untuk pengalaman terbaik:</p>
                         <div className="text-left space-y-3 bg-slate-50 rounded-xl p-4 mb-5">
-                            <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 rounded-full bg-[#05073C] text-white flex items-center justify-center text-xs font-bold shrink-0">1</div>
-                                <p className="text-sm text-slate-600">Tap ikon <span className="font-bold">Share</span> (⬆️) di Safari</p>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 rounded-full bg-[#05073C] text-white flex items-center justify-center text-xs font-bold shrink-0">2</div>
-                                <p className="text-sm text-slate-600">Scroll ke bawah dan tap <span className="font-bold">&quot;Add to Home Screen&quot;</span></p>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 rounded-full bg-[#05073C] text-white flex items-center justify-center text-xs font-bold shrink-0">3</div>
-                                <p className="text-sm text-slate-600">Tap <span className="font-bold">&quot;Add&quot;</span> untuk menginstall</p>
-                            </div>
+                            {isIOS ? (
+                                <>
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-6 h-6 rounded-full bg-[#05073C] text-white flex items-center justify-center text-xs font-bold shrink-0">1</div>
+                                        <p className="text-sm text-slate-600">Tap ikon <span className="font-bold">Share</span> (⬆️) di Safari</p>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-6 h-6 rounded-full bg-[#05073C] text-white flex items-center justify-center text-xs font-bold shrink-0">2</div>
+                                        <p className="text-sm text-slate-600">Scroll ke bawah dan tap <span className="font-bold">&quot;Add to Home Screen&quot;</span></p>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-6 h-6 rounded-full bg-[#05073C] text-white flex items-center justify-center text-xs font-bold shrink-0">3</div>
+                                        <p className="text-sm text-slate-600">Tap <span className="font-bold">&quot;Add&quot;</span> untuk menginstall</p>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-6 h-6 rounded-full bg-[#05073C] text-white flex items-center justify-center text-xs font-bold shrink-0">1</div>
+                                        <p className="text-sm text-slate-600">Tap ikon <span className="font-bold">⋮ (titik tiga)</span> di kanan atas Chrome</p>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-6 h-6 rounded-full bg-[#05073C] text-white flex items-center justify-center text-xs font-bold shrink-0">2</div>
+                                        <p className="text-sm text-slate-600">Tap <span className="font-bold">&quot;Install app&quot;</span> atau <span className="font-bold">&quot;Add to Home screen&quot;</span></p>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-6 h-6 rounded-full bg-[#05073C] text-white flex items-center justify-center text-xs font-bold shrink-0">3</div>
+                                        <p className="text-sm text-slate-600">Tap <span className="font-bold">&quot;Install&quot;</span> untuk menginstall</p>
+                                    </div>
+                                </>
+                            )}
                         </div>
                         <button
                             onClick={handleDismiss}
