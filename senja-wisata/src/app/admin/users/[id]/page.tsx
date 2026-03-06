@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
     ArrowLeft, User, Mail, Phone, MapPin, Camera,
-    CheckCircle, Shield, Crown, UserCheck, Save
+    CheckCircle, Shield, Crown, UserCheck, Save, KeyRound, Eye, EyeOff, AlertCircle
 } from "lucide-react";
 
 type UserData = {
@@ -51,6 +51,11 @@ export default function AdminUserEditPage({ params }: { params: Promise<{ id: st
         bio: userData?.bio || "",
     });
     const [selectedRole, setSelectedRole] = useState(userData?.role || "user");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [passwordSaving, setPasswordSaving] = useState(false);
+    const [passwordMsg, setPasswordMsg] = useState({ type: "", text: "" });
 
     if (!userData) {
         return (
@@ -75,6 +80,43 @@ export default function AdminUserEditPage({ params }: { params: Promise<{ id: st
         e.preventDefault();
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
+    };
+
+    const handlePasswordReset = async () => {
+        if (!newPassword) {
+            setPasswordMsg({ type: "error", text: "Password baru wajib diisi" });
+            return;
+        }
+        if (newPassword.length < 6) {
+            setPasswordMsg({ type: "error", text: "Password minimal 6 karakter" });
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setPasswordMsg({ type: "error", text: "Password dan konfirmasi tidak cocok" });
+            return;
+        }
+        setPasswordSaving(true);
+        setPasswordMsg({ type: "", text: "" });
+        try {
+            const res = await fetch(`/api/admin/users/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "reset-password", password: newPassword }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setPasswordMsg({ type: "success", text: "Password berhasil diubah!" });
+                setNewPassword("");
+                setConfirmPassword("");
+                setTimeout(() => setPasswordMsg({ type: "", text: "" }), 3000);
+            } else {
+                setPasswordMsg({ type: "error", text: data.error || "Gagal mengubah password" });
+            }
+        } catch {
+            setPasswordMsg({ type: "error", text: "Terjadi kesalahan jaringan" });
+        } finally {
+            setPasswordSaving(false);
+        }
     };
 
     return (
@@ -190,6 +232,72 @@ export default function AdminUserEditPage({ params }: { params: Promise<{ id: st
                     )}
                 </div>
             </form>
+
+            {/* Password Reset Section */}
+            <div className="card p-6 space-y-5">
+                <h3 className="font-bold text-lg border-b border-slate-100 pb-3" style={{ color: '#05073C' }}>
+                    <span className="flex items-center gap-2"><KeyRound size={18} /> Reset Password</span>
+                </h3>
+                <p className="text-sm text-slate-400">
+                    Gunakan fitur ini untuk membantu user yang lupa password. Password baru akan langsung aktif.
+                </p>
+
+                {passwordMsg.text && (
+                    <div className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium ${passwordMsg.type === "success" ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+                        }`}>
+                        {passwordMsg.type === "success" ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
+                        {passwordMsg.text}
+                    </div>
+                )}
+
+                <div>
+                    <label className="form-label">Password Baru</label>
+                    <div className="relative">
+                        <KeyRound size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="form-input pl-9 pr-10"
+                            placeholder="Minimal 6 karakter"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                            {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label className="form-label">Konfirmasi Password</label>
+                    <div className="relative">
+                        <KeyRound size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className="form-input pl-9"
+                            placeholder="Ulangi password baru"
+                        />
+                    </div>
+                </div>
+
+                <button
+                    onClick={handlePasswordReset}
+                    disabled={passwordSaving || !newPassword || !confirmPassword}
+                    className="btn text-white text-sm font-semibold gap-2 disabled:opacity-50"
+                    style={{ backgroundColor: '#DC2626' }}
+                >
+                    {passwordSaving ? (
+                        <><Save size={16} className="animate-spin" /> Menyimpan...</>
+                    ) : (
+                        <><KeyRound size={16} /> Reset Password</>
+                    )}
+                </button>
+            </div>
 
             {/* Role Section */}
             <div className="card p-6 space-y-4">
