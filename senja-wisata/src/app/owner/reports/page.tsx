@@ -36,32 +36,67 @@ const statusColors: Record<string, string> = {
 };
 
 export default function OwnerReportsPage() {
-    const [monthly, setMonthly] = useState<MonthData[]>([]);
-    const [statusBreakdown, setStatusBreakdown] = useState<StatusItem[]>([]);
-    const [topTours, setTopTours] = useState<TopTour[]>([]);
-    const [yearComparison, setYearComparison] = useState<YearData[]>([]);
-    const [summary, setSummary] = useState({ totalRevenue: 0, totalBookings: 0, totalPaid: 0, avgBookingValue: 0, months: 0 });
+    const [allMonthly, setAllMonthly] = useState<MonthData[]>([]);
+    const [allStatusBreakdown, setAllStatusBreakdown] = useState<StatusItem[]>([]);
+    const [allTopTours, setAllTopTours] = useState<TopTour[]>([]);
+    const [allYearComparison, setAllYearComparison] = useState<YearData[]>([]);
     const [filterMonths, setFilterMonths] = useState(12);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [exporting, setExporting] = useState(false);
 
-    useEffect(() => { fetchData(); }, [filterMonths]);
+    useEffect(() => { fetchData(); }, []);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/owner/reports?months=${filterMonths}&t=${Date.now()}`, { cache: "no-store" });
+            const res = await fetch(`/api/owner/reports?months=24&t=${Date.now()}`, { cache: "no-store" });
             const json = await res.json();
-            setMonthly(json.monthly || []);
-            setStatusBreakdown(json.statusBreakdown || []);
-            setTopTours(json.topTours || []);
-            setYearComparison(json.yearComparison || []);
-            setSummary(json.summary || { totalRevenue: 0, totalBookings: 0, totalPaid: 0, avgBookingValue: 0, months: 0 });
+            setAllMonthly(json.monthly || []);
+            setAllStatusBreakdown(json.statusBreakdown || []);
+            setAllTopTours(json.topTours || []);
+            setAllYearComparison(json.yearComparison || []);
             setError("");
         } catch { setError("Gagal memuat data"); }
         finally { setLoading(false); }
     };
+
+    // Client-side filtering
+    const monthly = allMonthly.slice(0, filterMonths);
+    const totalRevenue = monthly.reduce((s, m) => s + m.revenue, 0);
+    const totalBookings = monthly.reduce((s, m) => s + m.bookings, 0);
+    const totalPaid = monthly.reduce((s, m) => s + m.paidBookings, 0);
+    const avgBookingValue = totalPaid > 0 ? Math.round(totalRevenue / totalPaid) : 0;
+    const summary = { totalRevenue, totalBookings, totalPaid, avgBookingValue, months: monthly.length };
+
+    // Scale top tours proportionally
+    const scale = allMonthly.length > 0 ? monthly.length / allMonthly.length : 1;
+    const topTours = allTopTours.map(t => ({
+        ...t,
+        bookings: Math.round(t.bookings * scale),
+        revenue: Math.round(t.revenue * scale),
+        paidBookings: Math.round(t.paidBookings * scale),
+    }));
+
+    // Recalculate status breakdown proportionally
+    const statusBreakdown = allStatusBreakdown.map(s => ({
+        ...s,
+        count: Math.round(s.count * scale),
+        totalValue: Math.round(s.totalValue * scale),
+    }));
+
+    // Year comparison from filtered monthly data
+    const yearMap: Record<number, { bookings: number; revenue: number; paidBookings: number }> = {};
+    monthly.forEach(m => {
+        const year = parseInt(m.monthKey.split("-")[0]);
+        if (!yearMap[year]) yearMap[year] = { bookings: 0, revenue: 0, paidBookings: 0 };
+        yearMap[year].bookings += m.bookings;
+        yearMap[year].revenue += m.revenue;
+        yearMap[year].paidBookings += m.paidBookings;
+    });
+    const yearComparison = Object.entries(yearMap)
+        .map(([y, d]) => ({ year: Number(y), ...d }))
+        .sort((a, b) => b.year - a.year);
 
     // Simple bar chart using CSS
     const maxRevenue = Math.max(...monthly.map(m => m.revenue), 1);
