@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Search, UserCheck, Shield, Crown, Edit2, Trash2, Mail, X, Loader2, Plus, UserPlus } from "lucide-react";
+import { Search, UserCheck, Shield, Crown, Edit2, Trash2, Mail, X, Loader2, Plus, UserPlus, Lock } from "lucide-react";
+import { useAuthStore } from "@/store/auth";
 
 type User = { id: number; name: string; email: string; role: string; totalBookings: number; joined: string; avatar: string; };
 
@@ -23,6 +24,8 @@ const roleTabLabels: Record<string, string> = { "Semua": "Semua", owner: "Owner"
 
 export default function AdminUsersPage() {
     const router = useRouter();
+    const { user: currentUser } = useAuthStore();
+    const isOwner = currentUser?.role === "owner";
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -202,15 +205,23 @@ export default function AdminUsersPage() {
                                             <td className="p-4 hidden lg:table-cell text-slate-400 text-xs">{u.joined}</td>
                                             <td className="p-4">
                                                 <div className="flex items-center gap-1">
-                                                    <button onClick={() => router.push(`/admin/users/${u.id}`)}
-                                                        className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-amber-50 hover:text-amber-500 transition-all" title="Edit profil">
-                                                        <Edit2 size={15} />
-                                                    </button>
-                                                    <button onClick={() => setDeleteTarget(u)}
-                                                        disabled={u.role === "owner"}
-                                                        className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Hapus">
-                                                        <Trash2 size={15} />
-                                                    </button>
+                                                    {isOwner ? (
+                                                        <>
+                                                            <button onClick={() => router.push(`/admin/users/${u.id}`)}
+                                                                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-amber-50 hover:text-amber-500 transition-all" title="Edit profil">
+                                                                <Edit2 size={15} />
+                                                            </button>
+                                                            <button onClick={() => setDeleteTarget(u)}
+                                                                disabled={u.role === "owner"}
+                                                                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all disabled:opacity-30 disabled:cursor-not-allowed" title="Hapus">
+                                                                <Trash2 size={15} />
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <span className="flex items-center gap-1 text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded-lg" title="Perlu persetujuan Owner">
+                                                            <Lock size={12} /> Owner Only
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>
