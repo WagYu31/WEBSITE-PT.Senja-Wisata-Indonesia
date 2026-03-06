@@ -22,26 +22,180 @@ interface ChatMessage {
 
 // ── Bot knowledge base ────────────────────────────────────────────────────────
 const BOT_RESPONSES: Array<{ kw: string[]; reply: string }> = [
-    { kw: ["halo", "hi", "hey", "hai", "selamat", "pagi", "siang", "sore", "malam"], reply: "Halo! 😊 Selamat datang di **Senja Wisata**!\n\nAda yang bisa saya bantu hari ini?" },
-    { kw: ["paket", "wisata", "tour", "lihat", "info", "destinasi", "pilihan"], reply: "Kami punya ratusan paket wisata! 🌏\n\n✈️ **Favorit Kami:**\n• **Paket Bali 4D3N** — Rp 2.5jt/pax\n• **Raja Ampat 5D4N** — Rp 6.8jt/pax\n• **Komodo Island 3D2N** — Rp 3.2jt/pax\n• **Bromo Sunrise 2D1N** — Rp 1.2jt/pax\n\nMau lihat selengkapnya?" },
-    { kw: ["harga", "biaya", "berapa", "tarif", "cost"], reply: "Harga paket kami mulai dari **Rp 900rb** untuk trip domestik! 💰\n\n📊 **Kisaran Harga:**\n• Domestik: Rp 900rb – Rp 8jt/pax\n• Internasional: Rp 8jt – Rp 25jt/pax\n\nHarga sudah termasuk tiket, hotel & pemandu. Mau info lebih detail?" },
-    { kw: ["booking", "pesan", "daftar", "reservasi", "beli"], reply: "Cara booking gampang banget! 🎉\n\n1️⃣ Pilih paket di menu **Tour**\n2️⃣ Klik **Pesan Sekarang**\n3️⃣ Isi data diri & pilih tanggal\n4️⃣ Bayar via transfer / e-wallet\n5️⃣ Dapat e-ticket via email\n\nBisa juga langsung WhatsApp kami ya!" },
-    { kw: ["promo", "diskon", "voucher", "kode", "murah", "hemat"], reply: "Ada promo menarik nih! 🎁\n\n🏷️ **SENJA10** — diskon 10% semua paket\n🏷️ **WELCOME50** — Rp 50rb untuk member baru\n\nMasukkan kode saat checkout, berlaku sampai akhir tahun!" },
-    { kw: ["include", "fasilitas", "termasuk", "apa saja", "free"], reply: "Yang sudah include dalam paket: ✅\n\n🚌 Transportasi PP\n🏨 Hotel bintang 3-4\n🍽️ Makan sesuai itinerary\n🎫 Tiket masuk objek wisata\n👨‍💼 Tour guide berpengalaman\n\nBeberapa paket premium sudah termasuk tiket pesawat!" },
-    { kw: ["cancel", "refund", "batal", "kembali", "reschedule"], reply: "Kebijakan pembatalan kami: 📋\n\n• **14+ hari sebelum** → refund 80%\n• **7-13 hari sebelum** → refund 50%\n• **< 7 hari** → no refund\n\nReschedule gratis 1x hingga 30 hari sebelum keberangkatan. Mau tanya lebih lanjut?" },
-    { kw: ["kontak", "hubungi", "telepon", "wa", "whatsapp", "email"], reply: "Kami bisa dihubungi via: 📞\n\n📱 **WhatsApp:** +62 812-3456-7890\n📧 **Email:** info@senjawisata.com\n🕐 **Jam layanan:** Senin–Sabtu 08.00–20.00 WIB\n\nAtau klik tombol WhatsApp di bawah ya!" },
-    { kw: ["aman", "keamanan", "covid", "protokol", "asuransi"], reply: "Keselamatan tamu adalah prioritas kami! 🛡️\n\n✅ Asuransi perjalanan included\n✅ Guide bersertifikat & berpengalaman\n✅ Kendaraan rutin diservis\n✅ Protokol kesehatan diterapkan\n\nSudah dipercaya 5000+ pelanggan sejak 2015!" },
+    // Greetings
+    {
+        kw: ["halo", "hi", "hey", "hai", "selamat", "pagi", "siang", "sore", "malam", "assalamualaikum", "permisi"],
+        reply: "Halo! 😊 Selamat datang di **Senja Wisata**!\n\nSaya bisa bantu kamu soal:\n🌏 Paket wisata & destinasi\n💰 Harga & promo\n📋 Cara booking\n✈️ Itinerary & fasilitas\n\nMau tanya apa dulu?"
+    },
+
+    // ── TOUR PACKAGES ──────────────────────────────────────────────────────
+    {
+        kw: ["paket", "wisata", "tour", "lihat", "info", "destinasi", "pilihan", "ada apa aja", "apa saja", "tersedia", "rekomendasi", "rekomen"],
+        reply: "Kami punya banyak pilihan paket wisata! 🌏\n\n🏝️ **Paket Domestik Populer:**\n• **Bali Complete** 5D4N — Rp 4.2jt/pax\n• **Raja Ampat Paradise** 7D6N — Rp 8.5jt/pax\n• **Bromo Sunrise** 2D1N — Rp 1.2jt/pax\n• **Yogyakarta Cultural** 3D2N — Rp 1.8jt/pax\n• **Komodo Island** 4D3N — Rp 4.5jt/pax\n• **Lombok & Gili** 5D4N — Rp 3.8jt/pax\n\n👨‍👩‍👧 **Paket Keluarga:**\n• **Bali Family** 5D4N — Rp 3.5jt/pax\n• **Jogja Family** 4D3N — Rp 2.5jt/pax\n\n💑 **Honeymoon:**\n• **Maldives** 6D5N — Rp 15jt/pax\n\nMau tau detail paket yang mana?"
+    },
+
+    // Bali specific
+    {
+        kw: ["bali"],
+        reply: "🌴 **Paket Bali** — Destinasi Paling Populer!\n\n📦 **Bali Complete 5D4N** — Rp 4.2jt/pax\n• Ubud, Tegalalang, Monkey Forest\n• Nusa Penida day trip\n• Pura Besakih & Kintamani\n• Sunset di Uluwatu\n• Villa private + breakfast\n\n👨‍👩‍👧 **Bali Family 5D4N** — Rp 3.5jt/pax\n• Waterbom Bali\n• Bali Safari & Marine Park\n• Dolphin Watching Lovina\n• Cocok untuk anak-anak!\n\nSemuanya sudah termasuk hotel, transportasi, makan, tiket wisata & guide. Mau booking yang mana?"
+    },
+
+    // Raja Ampat specific
+    {
+        kw: ["raja ampat", "ampat"],
+        reply: "🐠 **Raja Ampat Paradise 7D6N** — Rp 8.5jt/pax\n\n**Itinerary Lengkap:**\n📍 Day 1: Tiba Sorong → Transfer resort\n📍 Day 2: Snorkeling Chicken Island\n📍 Day 3: Pianemo + Diving Friwen Wall\n📍 Day 4: Cape Kri + berenang dengan Manta Ray! 🦈\n📍 Day 5: Wayag Lagoon + trekking\n📍 Day 6: Free + Sunset Cruise\n📍 Day 7: Check-out & pulang\n\n✅ Include: Resort, makan 3x, peralatan diving/snorkeling, boat, guide\n\nRaja Ampat memiliki **75% spesies karang dunia**! Tertarik?"
+    },
+
+    // Bromo specific
+    {
+        kw: ["bromo", "gunung", "sunrise", "trekking"],
+        reply: "🌋 **Bromo Sunrise Trekking 2D1N** — Rp 1.2jt/pax\n\n**Itinerary:**\n📍 Day 1: Malang/Surabaya → Cemoro Lawang, check-in hotel\n📍 Day 2: Bangun 03:00 🌅, Jeep ke Penanjakan, sunrise view, turun ke kawah Bromo\n\n✅ Include: Hotel, jeep 4x4, guide, makan, tiket masuk\n\n⭐ Rating 4.9/5 — Paket paling populer untuk short trip!\n\nMau booking tanggal berapa?"
+    },
+
+    // Yogyakarta specific
+    {
+        kw: ["jogja", "yogya", "yogyakarta", "borobudur", "prambanan", "merapi"],
+        reply: "🏛️ **Yogyakarta Tours:**\n\n📦 **Cultural Tour 3D2N** — Rp 1.8jt/pax\n• Malioboro & gudeg legendaris\n• Sunrise Borobudur 🕌\n• Candi Prambanan\n• Jeep Merapi Lava Tour 🌋\n\n👨‍👩‍👧 **Jogja Family 4D3N** — Rp 2.5jt/pax\n• Borobudur + Workshop Batik\n• Merapi Jeep + Museum\n• Kraton Yogyakarta\n• Pasar Beringharjo & oleh-oleh\n\n✅ Include: Hotel, makan, transport, guide, tiket masuk\n\nJogja cocok untuk semua umur! Mau pilih yang mana?"
+    },
+
+    // Komodo specific
+    {
+        kw: ["komodo", "labuan bajo", "flores", "ntt"],
+        reply: "🦎 **Komodo Island Adventure 4D3N** — Rp 4.5jt/pax\n\n**Itinerary:**\n📍 Day 1: Tiba Labuan Bajo → boarding liveaboard 🚢\n📍 Day 2: Trekking lihat Komodo + Manta Point snorkeling\n📍 Day 3: Pink Beach 🩷 + Trekking Padar Island sunrise\n📍 Day 4: Kanawa Island → kembali\n\n✅ Include: Liveaboard, makan 3x, snorkeling gear, guide, tiket masuk\n\nPadar Island viewpoint-nya WAJIB di-explore! 📸 Tertarik?"
+    },
+
+    // Lombok specific
+    {
+        kw: ["lombok", "gili", "rinjani"],
+        reply: "🏖️ **Lombok & Gili Islands 5D4N** — Rp 3.8jt/pax\n\n**Itinerary:**\n📍 Day 1: Tiba → Resort Mandalika, Kuta Lombok\n📍 Day 2: Gili Trawangan — snorkeling + sunset swing 🌅\n📍 Day 3: Gili Meno & Air — berenang sama penyu! 🐢\n📍 Day 4: Trekking Air Terjun Sendang Gile\n📍 Day 5: Desa Sade (tenun tradisional) → pulang\n\n✅ Include: Resort, fast boat, makan, guide, snorkeling gear\n\n3 Gili wajib dikunjungi! Mau booking?"
+    },
+
+    // Maldives / Honeymoon
+    {
+        kw: ["maldives", "honeymoon", "bulan madu", "romantis", "couple"],
+        reply: "💑 **Maldives Honeymoon Escape 6D5N** — Rp 15jt/pax\n\n**Itinerary Romantis:**\n📍 Day 1: Tiba → Water Villa private! 🏝️\n📍 Day 2: Snorkeling + Dolphin Cruise + Candle Dinner 🕯️\n📍 Day 3: Couples Spa + Private Beach\n📍 Day 4: Island Hopping & seafood segar\n📍 Day 5: Sunrise Kayak + Fine Dining over water\n📍 Day 6: Pulang\n\n✅ Include: Water villa, pesawat PP, makan, aktivitas, spa\n\nPerfect untuk bulan madu! 💕 Mau tanya lebih detail?"
+    },
+
+    // Family packages
+    {
+        kw: ["keluarga", "family", "anak", "anak-anak", "kid"],
+        reply: "👨‍👩‍👧‍👦 **Paket Keluarga** — Aman & Seru!\n\n🏝️ **Bali Family 5D4N** — Rp 3.5jt/pax\n• Waterbom Bali, Safari Park, Dolphin Watch\n• Villa family-friendly\n\n🏛️ **Jogja Family 4D3N** — Rp 2.5jt/pax\n• Borobudur, Workshop Batik, Merapi Jeep\n• Edukasi & petualangan!\n\n✅ Semua paket family include:\n• Hotel family room\n• Child-friendly menu\n• Aktivitas aman untuk anak\n• Free 1 anak di bawah 5 tahun\n\nMau pilih Bali atau Jogja?"
+    },
+
+    // ── PRICING & PAYMENT ──────────────────────────────────────────────────
+    {
+        kw: ["harga", "biaya", "berapa", "tarif", "cost", "budget", "mahal", "per orang"],
+        reply: "Harga paket kami mulai dari **Rp 900rb**! 💰\n\n📊 **Kisaran Harga per Orang:**\n• 🌋 Bromo 2D1N: **Rp 1.2jt**\n• 🏛️ Jogja 3D2N: **Rp 1.8jt**\n• 🏖️ Lombok 5D4N: **Rp 3.8jt**\n• 🌴 Bali 5D4N: **Rp 4.2jt**\n• 🦎 Komodo 4D3N: **Rp 4.5jt**\n• 🐠 Raja Ampat 7D6N: **Rp 8.5jt**\n• 💑 Maldives 6D5N: **Rp 15jt**\n\n🏷️ **Anak 5-11 tahun diskon 30%**\n👶 **Anak di bawah 5 tahun GRATIS!**\n\nHarga sudah include hotel, transport, makan, tiket & guide!"
+    },
+
+    {
+        kw: ["bayar", "pembayaran", "transfer", "payment", "e-wallet", "gopay", "ovo", "dana", "qris", "kartu kredit", "cicil"],
+        reply: "Metode pembayaran yang tersedia: 💳\n\n🏦 **Transfer Bank:**\n• BCA, BNI, BRI, Mandiri\n\n📱 **E-Wallet:**\n• GoPay, OVO, Dana, ShopeePay\n\n📲 **QRIS** — Scan & bayar!\n\n💳 **Kartu Kredit/Debit** — Visa, Mastercard\n\n🔄 **Cicilan** 0% tersedia untuk pembelian di atas Rp 3jt\n\nSetelah bayar, e-ticket dikirim otomatis ke email kamu! ✉️"
+    },
+
+    // ── BOOKING ─────────────────────────────────────────────────────────────
+    {
+        kw: ["booking", "pesan", "daftar", "reservasi", "beli", "order", "cara pesan", "gimana caranya", "bagaimana"],
+        reply: "Cara booking gampang banget! 🎉\n\n1️⃣ Buka menu **Tours** di website\n2️⃣ Pilih paket yang kamu suka\n3️⃣ Klik **Pesan Sekarang**\n4️⃣ Isi data diri & pilih tanggal\n5️⃣ Pilih metode pembayaran\n6️⃣ Bayar & dapat **e-ticket** via email\n\n⏰ Konfirmasi otomatis dalam 1×24 jam!\n\n💡 **Tips:** Booking 30 hari sebelumnya dapat harga early bird! 🐦\n\nAtau mau dibantu booking via WhatsApp?"
+    },
+
+    // ── PROMOS ──────────────────────────────────────────────────────────────
+    {
+        kw: ["promo", "diskon", "voucher", "kode", "murah", "hemat", "sale", "potongan"],
+        reply: "Promo spesial untuk kamu! 🎁\n\n🏷️ **SENJA10** — Diskon 10% semua paket\n🏷️ **WELCOME50** — Potongan Rp 50rb member baru\n🏷️ **EARLYBIRD** — Diskon 15% booking 30 hari sebelumnya\n🏷️ **GROUP5** — Diskon 20% untuk 5+ orang\n\n❗ **Berlaku sampai akhir tahun!**\n\nMasukkan kode promo saat checkout ya!"
+    },
+
+    // ── FACILITIES ──────────────────────────────────────────────────────────
+    {
+        kw: ["include", "fasilitas", "termasuk", "apa saja", "free", "dapat apa", "sudah termasuk"],
+        reply: "Yang sudah include di setiap paket: ✅\n\n🚌 Transportasi AC selama tour\n🏨 Hotel bintang 3-4 (sesuai paket)\n🍽️ Makan sesuai itinerary\n🎫 Tiket masuk semua objek wisata\n👨‍💼 Tour guide berpengalaman\n📸 Dokumentasi foto\n🛡️ Asuransi perjalanan\n\n⭐ **Paket Premium tambahan:**\n• Tiket pesawat PP\n• Hotel bintang 5\n• Private tour (tanpa gabungan)\n\nMau upgrade ke premium?"
+    },
+
+    // ── CANCELLATION ────────────────────────────────────────────────────────
+    {
+        kw: ["cancel", "refund", "batal", "kembali", "reschedule", "ganti tanggal", "ubah jadwal"],
+        reply: "Kebijakan pembatalan kami: 📋\n\n• **30+ hari sebelum** → refund 100% ✅\n• **14-29 hari sebelum** → refund 80%\n• **7-13 hari sebelum** → refund 50%\n• **< 7 hari** → no refund\n\n🔄 **Reschedule:** Gratis 1x, hingga 14 hari sebelum keberangkatan\n\n⚡ **Force majeure** (bencana/pandemic): Full refund!\n\nProses refund 3-5 hari kerja ke rekening. Ada yang mau ditanyakan lagi?"
+    },
+
+    // ── CONTACT ──────────────────────────────────────────────────────────────
+    {
+        kw: ["kontak", "hubungi", "telepon", "wa", "whatsapp", "email", "alamat", "kantor", "cs"],
+        reply: "Hubungi kami kapan saja! 📞\n\n📱 **WhatsApp:** +62 812-3456-7890\n📧 **Email:** info@senjawisata.com\n🌐 **Website:** fluentlya.com\n📍 **Kantor:** Malang, Jawa Timur\n\n🕐 **Jam layanan:**\nSenin – Jumat: 08.00 – 21.00 WIB\nSabtu: 08.00 – 18.00 WIB\nMinggu: 09.00 – 15.00 WIB\n\nResponse time < 5 menit via WhatsApp! ⚡"
+    },
+
+    // ── SAFETY ───────────────────────────────────────────────────────────────
+    {
+        kw: ["aman", "keamanan", "covid", "protokol", "asuransi", "selamat", "safety"],
+        reply: "Keselamatan tamu prioritas #1! 🛡️\n\n✅ Asuransi perjalanan ALL RISK included\n✅ Guide bersertifikat & first aid trained\n✅ Kendaraan tahun 2020+ & rutin diservis\n✅ Protokol kesehatan diterapkan\n✅ Emergency contact 24/7\n\n🏆 **Track Record:**\n• 15.000+ tamu sejak 2015\n• Rating 4.9/5\n• Zero accident record\n\nTravel dengan tenang bersama kami! 😊"
+    },
+
+    // ── GROUP & CUSTOM ──────────────────────────────────────────────────────
+    {
+        kw: ["grup", "group", "rombongan", "kantor", "perusahaan", "outing", "gathering", "team building"],
+        reply: "Kami melayani paket grup! 👥\n\n🏢 **Corporate Outing** — Team building + wisata\n🎓 **Study Tour** — Untuk sekolah/kampus\n👨‍👩‍👧‍👦 **Family Gathering** — Min 10 orang\n\n💡 **Keuntungan Grup:**\n• Diskon s/d 25% (10+ orang)\n• Itinerary bisa dikustom\n• Tour leader dedicated\n• Invoice & faktur pajak tersedia\n\nHubungi kami untuk penawaran khusus ya!"
+    },
+
+    {
+        kw: ["custom", "private", "khusus", "sesuai", "request", "kustom"],
+        reply: "Tentu bisa custom! 🎨\n\n📋 **Yang bisa dikustom:**\n• Durasi perjalanan\n• Destinasi & hotel\n• Aktivitas harian\n• Kelas penerbangan\n• Menu makanan\n\n💰 Harga menyesuaikan pilihan kamu\n📲 Konsultasi GRATIS via WhatsApp!\n\nCeritakan trip impian kamu, kami buatkan paketnya! 😊"
+    },
+
+    // ── WEATHER & TIMING ────────────────────────────────────────────────────
+    {
+        kw: ["cuaca", "musim", "hujan", "panas", "kapan", "waktu terbaik", "best time"],
+        reply: "Waktu terbaik untuk berlibur: 🌤️\n\n📅 **April – Oktober** (Musim Kering):\n• Best untuk: Bali, Komodo, Raja Ampat, Lombok\n• Langit cerah, laut tenang\n\n📅 **November – Maret** (Musim Hujan):\n• Best untuk: Jogja, Bromo (sunrise tetap cantik!)\n• Harga lebih murah, wisatawan lebih sedikit\n\n🌊 **Raja Ampat:** Terbaik Oktober – April\n🦎 **Komodo:** Terbaik April – Juni\n\nTapi semua destinasi bisa dikunjungi sepanjang tahun! 😊"
+    },
+
+    // ── ITINERARY QUESTIONS ──────────────────────────────────────────────────
+    {
+        kw: ["jadwal", "itinerary", "acara", "rundown", "kegiatan", "agenda"],
+        reply: "Setiap paket punya itinerary lengkap! 📋\n\n📍 Contoh **Bali 5D4N:**\nDay 1: Tiba → Check-in villa\nDay 2: Ubud Cultural Tour\nDay 3: Pura Besakih & Kintamani\nDay 4: Nusa Penida Day Trip\nDay 5: Shopping & Sunset Uluwatu\n\n✅ Detail lengkap bisa dilihat di halaman masing-masing tour di website.\n\nMau saya jelaskan itinerary paket yang mana?"
+    },
+
+    // ── REVIEWS & TRUST ─────────────────────────────────────────────────────
+    {
+        kw: ["review", "ulasan", "testimoni", "rating", "bagus", "terpercaya", "bintang"],
+        reply: "Terima kasih sudah bertanya! 🌟\n\n⭐ **Rating:** 4.9/5 dari 5000+ traveler\n🏆 **Top Rated** di Google Reviews\n💬 **Testimoni favorit:**\n\n_\"Guide ramah, itinerary rapi, pengalaman luar biasa!\"_ — Rina, Jakarta\n\n_\"Raja Ampat-nya bikin speechless!\"_ — Budi, Surabaya\n\n_\"Family trip Bali seru banget, anak-anak happy!\"_ — Sarah, Bandung\n\nBaca lebih banyak review di website kami ya! 📖"
+    },
+
+    // ── THANK YOU & GOODBYE ─────────────────────────────────────────────────
+    {
+        kw: ["terima kasih", "makasih", "thanks", "thank you", "trims"],
+        reply: "Sama-sama! 🙏\n\nSenang bisa membantu. Kalau ada pertanyaan lagi, jangan sungkan ya! 😊\n\nSemoga liburanmu menyenangkan bersama **Senja Wisata**! 🌅✨"
+    },
+
+    {
+        kw: ["bye", "dah", "sampai jumpa", "selesai", "cukup", "udah"],
+        reply: "Selamat tinggal! 👋\n\nTerima kasih sudah menghubungi **Senja Wisata**.\nKami tunggu booking-nya ya! 🌴\n\nSampai jumpa di perjalanan berikutnya! 🚀"
+    },
+
+    // ── YES / INTEREST ──────────────────────────────────────────────────────
+    {
+        kw: ["iya", "ya", "mau", "boleh", "ok", "oke", "tertarik", "saya mau", "pengen", "ingin"],
+        reply: "Senang kamu tertarik! 😊\n\nUntuk melanjutkan, kamu bisa:\n\n1️⃣ Langsung **booking di website** → menu Tours\n2️⃣ Chat lebih lanjut dengan **admin** kami\n3️⃣ WhatsApp ke **+62 812-3456-7890**\n\nAtau mau saya jelaskan soal paket tertentu? Sebutkan saja destinasinya! 🌏"
+    },
 ];
 
 function getBotReply(text: string): string {
-    const lower = text.toLowerCase();
+    const lower = text.toLowerCase().replace(/[?!.,]/g, "");
+    // Score each response by number of keyword matches
+    let bestReply = "";
+    let bestScore = 0;
     for (const { kw, reply } of BOT_RESPONSES) {
-        if (kw.some((k) => lower.includes(k))) return reply;
+        let score = 0;
+        for (const k of kw) {
+            if (lower.includes(k)) score += k.length; // longer keyword = higher score
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            bestReply = reply;
+        }
     }
-    return "Maaf, saya belum memahami pertanyaan Anda. 🤔\n\nCoba tanyakan tentang:\n• **Paket wisata** yang tersedia\n• **Harga** & promo\n• **Cara booking**\n• **Fasilitas** yang included\n\nAtau langsung hubungi tim kami!";
+    if (bestScore > 0) return bestReply;
+    return "Maaf, saya belum memahami pertanyaan Anda. 🤔\n\nCoba tanyakan tentang:\n• **Paket wisata** (Bali, Raja Ampat, Bromo, dll)\n• **Harga** & promo\n• **Cara booking** & pembayaran\n• **Fasilitas** yang included\n• **Jadwal** & itinerary\n\nAtau ketik nama destinasi impianmu! 🌏";
 }
 
-const QUICK_REPLIES = ["Info paket wisata", "Berapa harganya?", "Cara booking", "Ada promo?", "Fasilitas apa saja?"];
+const QUICK_REPLIES = ["Info paket wisata", "Berapa harganya?", "Cara booking", "Paket Bali", "Ada promo?"];
 
 // ── Render bold markdown ──────────────────────────────────────────────────────
 function renderText(text: string) {
