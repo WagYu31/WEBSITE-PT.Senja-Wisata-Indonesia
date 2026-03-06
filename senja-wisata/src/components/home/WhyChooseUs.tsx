@@ -4,44 +4,92 @@ import { motion } from "framer-motion";
 import { Shield, Award, Headphones, CreditCard, MapPin, ThumbsUp } from "lucide-react";
 
 const features = [
-    { icon: Shield, title: "Terpercaya & Aman", desc: "15+ tahun pengalaman melayani ribuan wisatawan dengan standar keamanan tertinggi.", color: "text-blue bg-blue/10" },
-    { icon: Award, title: "Paket Terbaik", desc: "Kurasi destinasi dan itinerary terbaik oleh tim expert kami yang berpengalaman.", color: "text-accent bg-accent/10" },
-    { icon: Headphones, title: "Support 24/7", desc: "Tim kami siap membantu Anda kapan saja selama perjalanan, 24 jam sehari.", color: "text-emerald-600 bg-emerald-50" },
-    { icon: CreditCard, title: "Harga Transparan", desc: "Tidak ada biaya tersembunyi. Semua sudah termasuk dalam paket yang Anda pilih.", color: "text-amber-600 bg-amber-50" },
-    { icon: MapPin, title: "Guide Berpengalaman", desc: "Pemandu wisata profesional yang berpengalaman dan menguasai setiap destinasi.", color: "text-purple-600 bg-purple-50" },
-    { icon: ThumbsUp, title: "Garansi Kepuasan", desc: "Tidak puas? Kami kembalikan uang Anda. Kepuasan Anda adalah prioritas utama kami.", color: "text-pink-600 bg-pink-50" },
+    { icon: Shield, title: "Terpercaya & Aman", desc: "15+ tahun pengalaman melayani ribuan wisatawan dengan standar keamanan tertinggi.", gradient: "linear-gradient(135deg, #667eea, #764ba2)" },
+    { icon: Award, title: "Paket Terbaik", desc: "Kurasi destinasi dan itinerary terbaik oleh tim expert yang berpengalaman.", gradient: "linear-gradient(135deg, #f093fb, #f5576c)" },
+    { icon: Headphones, title: "Support 24/7", desc: "Tim kami siap membantu Anda kapan saja selama perjalanan, 24 jam sehari.", gradient: "linear-gradient(135deg, #43e97b, #38f9d7)" },
+    { icon: CreditCard, title: "Harga Transparan", desc: "Tidak ada biaya tersembunyi. Semua sudah termasuk dalam paket pilihan.", gradient: "linear-gradient(135deg, #fa709a, #fee140)" },
+    { icon: MapPin, title: "Guide Profesional", desc: "Pemandu wisata profesional yang berpengalaman dan menguasai setiap destinasi.", gradient: "linear-gradient(135deg, #4facfe, #00f2fe)" },
+    { icon: ThumbsUp, title: "Garansi Kepuasan", desc: "Tidak puas? Kami kembalikan uang Anda. Kepuasan Anda adalah prioritas utama.", gradient: "linear-gradient(135deg, #a18cd1, #fbc2eb)" },
 ];
 
 export default function WhyChooseUs() {
     return (
-        <section className="section gradient-primary text-white overflow-hidden relative">
+        <section className="section overflow-hidden relative" style={{ background: "linear-gradient(135deg, #05073C 0%, #0f2027 40%, #1a3050 100%)" }}>
+            {/* Animated background elements */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue/10 rounded-full blur-3xl" />
-                <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
+                <motion.div
+                    className="absolute w-[600px] h-[600px] rounded-full"
+                    style={{ background: "radial-gradient(circle, rgba(43,190,232,0.08) 0%, transparent 70%)", top: "-20%", right: "0%" }}
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 8, repeat: Infinity }}
+                />
+                <motion.div
+                    className="absolute w-[400px] h-[400px] rounded-full"
+                    style={{ background: "radial-gradient(circle, rgba(252,76,77,0.06) 0%, transparent 70%)", bottom: "-10%", left: "10%" }}
+                    animate={{ scale: [1, 1.3, 1] }}
+                    transition={{ duration: 10, repeat: Infinity }}
+                />
+                {/* Grid pattern */}
+                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
             </div>
 
             <div className="container relative z-10">
-                <div className="text-center mb-12">
-                    <span className="inline-block font-serif italic text-blue text-xl mb-3">Mengapa Kami?</span>
-                    <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">Kenapa Pilih Senja Wisata?</h2>
-                    <p className="text-white/60 text-lg max-w-2xl mx-auto">Kami hadir dengan komitmen penuh untuk memberikan pengalaman wisata terbaik</p>
+                <div className="text-center mb-14">
+                    <motion.span
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 text-sm text-[#2BBEE8] mb-4"
+                    >
+                        ✨ Mengapa Kami?
+                    </motion.span>
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-4xl lg:text-5xl font-bold text-white mb-4"
+                    >
+                        Kenapa Pilih{" "}
+                        <span className="bg-gradient-to-r from-[#2BBEE8] to-[#7C3AED] bg-clip-text text-transparent">
+                            Senja Wisata?
+                        </span>
+                    </motion.h2>
+                    <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.1 }}
+                        className="text-white/50 text-lg max-w-2xl mx-auto"
+                    >
+                        Kami hadir dengan komitmen penuh untuk memberikan pengalaman wisata terbaik
+                    </motion.p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {features.map((f, i) => (
                         <motion.div
                             key={f.title}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group"
+                            transition={{ duration: 0.5, delay: i * 0.08 }}
+                            whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                            className="relative bg-white/[0.05] backdrop-blur-sm border border-white/[0.08] rounded-2xl p-6 group overflow-hidden"
                         >
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${f.color} group-hover:scale-110 transition-transform`}>
-                                <f.icon size={22} />
+                            {/* Hover glow */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" style={{ background: `${f.gradient}`, filter: "blur(40px)", transform: "scale(0.8)" }} />
+
+                            <div className="relative z-10">
+                                <motion.div
+                                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-white"
+                                    style={{ background: f.gradient }}
+                                    whileHover={{ rotate: 10, scale: 1.1 }}
+                                >
+                                    <f.icon size={22} />
+                                </motion.div>
+                                <h3 className="font-bold text-white text-lg mb-2 group-hover:text-[#2BBEE8] transition-colors">{f.title}</h3>
+                                <p className="text-white/50 text-sm leading-relaxed group-hover:text-white/70 transition-colors">{f.desc}</p>
                             </div>
-                            <h3 className="font-bold text-white text-lg mb-2">{f.title}</h3>
-                            <p className="text-white/60 text-sm leading-relaxed">{f.desc}</p>
                         </motion.div>
                     ))}
                 </div>

@@ -6,7 +6,12 @@ import { Compass, Package, Users, Star } from "lucide-react";
 import { useSiteSettings } from "@/lib/settings";
 
 const icons = [Compass, Package, Users, Star];
-const colors = ["text-blue", "text-accent", "text-emerald-500", "text-amber-400"];
+const gradients = [
+    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+];
 
 function parseValue(val: string): { num: number; decimal: boolean } {
     const cleaned = val.replace(/[^\d.,]/g, "").replace(",", ".");
@@ -21,9 +26,7 @@ function CountUp({ value, suffix, decimal }: { value: number; suffix: string; de
     const spring = useSpring(motionVal, { stiffness: 60, damping: 20 });
 
     useEffect(() => {
-        if (inView) {
-            motionVal.set(value);
-        }
+        if (inView) motionVal.set(value);
     }, [inView, motionVal, value]);
 
     useEffect(() => {
@@ -48,39 +51,39 @@ export default function StatsBar() {
         const suffixMatch = value.match(/[^\d.,]+$/);
         const suffix = suffixMatch ? suffixMatch[0] : "";
         const parsed = parseValue(value);
-        return {
-            icon: icons[i],
-            value: parsed.num,
-            suffix: suffix || "+",
-            label,
-            color: colors[i],
-            decimal: parsed.decimal,
-        };
+        return { icon: icons[i], value: parsed.num, suffix: suffix || "+", label, gradient: gradients[i], decimal: parsed.decimal };
     });
 
     return (
-        <section ref={ref} className="bg-white border-y border-slate-100 py-8">
-            <div className="container">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                    {statItems.map((item, i) => (
-                        <motion.div
-                            key={item.label}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={inView ? { opacity: 1, y: 0 } : {}}
-                            transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className="flex items-center gap-4"
-                        >
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-slate-50 ${item.color}`}>
-                                <item.icon size={22} />
-                            </div>
-                            <div>
-                                <div className="text-2xl font-bold text-primary">
-                                    <CountUp value={item.value} suffix={item.suffix} decimal={item.decimal} />
+        <section ref={ref} className="relative -mt-8 z-20 px-4">
+            <div className="container max-w-5xl">
+                <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl shadow-black/5 border border-white/50 p-6 lg:p-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                        {statItems.map((item, i) => (
+                            <motion.div
+                                key={item.label}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={inView ? { opacity: 1, y: 0 } : {}}
+                                transition={{ duration: 0.5, delay: i * 0.1 }}
+                                className="flex items-center gap-4 group"
+                            >
+                                <motion.div
+                                    className="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0"
+                                    style={{ background: item.gradient }}
+                                    whileHover={{ scale: 1.15, rotate: 5 }}
+                                    transition={{ type: "spring", stiffness: 400 }}
+                                >
+                                    <item.icon size={22} />
+                                </motion.div>
+                                <div>
+                                    <div className="text-2xl font-bold text-primary">
+                                        <CountUp value={item.value} suffix={item.suffix} decimal={item.decimal} />
+                                    </div>
+                                    <div className="text-sm text-slate-400">{item.label}</div>
                                 </div>
-                                <div className="text-sm text-slate-500">{item.label}</div>
-                            </div>
-                        </motion.div>
-                    ))}
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
