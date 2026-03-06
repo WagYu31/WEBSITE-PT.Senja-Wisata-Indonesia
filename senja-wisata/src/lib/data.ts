@@ -422,7 +422,25 @@ export const destinations: Destination[] = [
     { id: 4, name: "Komodo", country: "NTT, Indonesia", island: "NTT", tours: 12, image: "https://images.unsplash.com/photo-1578922746465-3a80a228f223?w=600&q=80", description: "Rumah naga Komodo dan perairan kristal" },
     { id: 5, name: "Labuan Bajo", country: "NTT, Indonesia", island: "NTT", tours: 18, image: "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?w=600&q=80", description: "Gerbang menuju kepulauan Komodo yang eksotis" },
     { id: 6, name: "Mount Bromo", country: "Jawa Timur, Indonesia", island: "Jawa", tours: 25, image: "https://images.unsplash.com/photo-1622185135505-2d795003994a?w=600&q=80", description: "Gunung api aktif dengan sunrise spektakuler" },
+    // NTB
+    { id: 7, name: "Lombok", country: "NTB, Indonesia", island: "NTB", tours: 22, image: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=600&q=80", description: "Pantai perawan, Gili Islands, dan budaya Sasak yang autentik" },
+    { id: 8, name: "Sumbawa", country: "NTB, Indonesia", island: "NTB", tours: 8, image: "https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?w=600&q=80", description: "Surga tersembunyi dengan pantai Lakey dan Gunung Tambora" },
+    { id: 9, name: "Gili Islands", country: "NTB, Indonesia", island: "NTB", tours: 15, image: "https://images.unsplash.com/photo-1570789210967-2cac24ba04c0?w=600&q=80", description: "Tiga pulau kecil dengan snorkeling, penyu, dan sunset swing ikonik" },
+    // Sumatra
+    { id: 10, name: "Danau Toba", country: "Sumatera Utara, Indonesia", island: "Sumatra", tours: 18, image: "https://images.unsplash.com/photo-1609946860441-a51ffcf22208?w=600&q=80", description: "Danau vulkanik terbesar di dunia dengan budaya Batak yang kaya" },
+    { id: 11, name: "Bukittinggi", country: "Sumatera Barat, Indonesia", island: "Sumatra", tours: 12, image: "https://images.unsplash.com/photo-1596788369388-3ce2731ca01e?w=600&q=80", description: "Ngarai Sianok, budaya Minangkabau, dan kuliner Padang otentik" },
+    { id: 12, name: "Bangka Belitung", country: "Bangka Belitung, Indonesia", island: "Sumatra", tours: 10, image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80", description: "Batu granit raksasa, pantai pasir putih, dan snorkeling jernih" },
+    // Kalimantan
+    { id: 13, name: "Derawan Islands", country: "Kalimantan Timur, Indonesia", island: "Kalimantan", tours: 14, image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=600&q=80", description: "Kepulauan tropis dengan ubur-ubur tak menyengat dan penyu hijau" },
+    { id: 14, name: "Tanjung Puting", country: "Kalimantan Tengah, Indonesia", island: "Kalimantan", tours: 10, image: "https://images.unsplash.com/photo-1571562185146-cbc2e9494d22?w=600&q=80", description: "Taman nasional orangutan liar terbesar, susur sungai klotok" },
+    { id: 15, name: "Balikpapan", country: "Kalimantan Timur, Indonesia", island: "Kalimantan", tours: 8, image: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=600&q=80", description: "Kota minyak dengan hutan mangrove dan pantai Melawai yang eksotis" },
+    // Sulawesi
+    { id: 16, name: "Toraja", country: "Sulawesi Selatan, Indonesia", island: "Sulawesi", tours: 15, image: "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?w=600&q=80", description: "Negeri di atas awan dengan rumah tongkonan dan budaya pemakaman unik" },
+    { id: 17, name: "Bunaken", country: "Sulawesi Utara, Indonesia", island: "Sulawesi", tours: 12, image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80", description: "Taman laut legendaris dengan 390 spesies karang dan diving kelas dunia" },
+    { id: 18, name: "Wakatobi", country: "Sulawesi Tenggara, Indonesia", island: "Sulawesi", tours: 10, image: "https://images.unsplash.com/photo-1582967788606-a171c7e0f85b?w=600&q=80", description: "Cagar biosfer UNESCO dengan terumbu karang pristine terbaik dunia" },
+    { id: 19, name: "Makassar", country: "Sulawesi Selatan, Indonesia", island: "Sulawesi", tours: 14, image: "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=600&q=80", description: "Kota pelabuhan bersejarah dengan Fort Rotterdam dan kuliner seafood" },
 ];
+
 
 export const testimonials: Testimonial[] = [
     { id: 1, name: "Ahmad Rasyid", from: "Makassar", rating: 5, text: "Pengalaman yang luar biasa! Raja Ampat benar-benar surga tersembunyi Indonesia. Pelayanan Senja Wisata top banget.", tour: "Raja Ampat Paradise", avatar: "https://randomuser.me/api/portraits/men/22.jpg" },
