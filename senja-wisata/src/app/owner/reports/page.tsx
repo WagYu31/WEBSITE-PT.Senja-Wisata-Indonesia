@@ -51,7 +51,7 @@ export default function OwnerReportsPage() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/owner/reports?months=${filterMonths}`);
+            const res = await fetch(`/api/owner/reports?months=${filterMonths}&t=${Date.now()}`, { cache: "no-store" });
             const json = await res.json();
             setMonthly(json.monthly || []);
             setStatusBreakdown(json.statusBreakdown || []);
