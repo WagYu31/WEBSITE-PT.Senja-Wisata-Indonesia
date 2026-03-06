@@ -215,22 +215,22 @@ export default function OwnerReportsPage() {
                     <h3 className="font-bold text-primary text-sm flex items-center gap-2 mb-4">
                         <BarChart3 size={16} className="text-blue" /> Grafik Revenue Bulanan
                     </h3>
-                    <div className="flex items-end gap-1.5 h-40">
+                    <div className="flex items-end gap-1.5" style={{ height: 160 }}>
                         {[...monthly].reverse().map(m => {
-                            const height = maxRevenue > 0 ? (m.revenue / maxRevenue) * 100 : 0;
+                            const heightPx = maxRevenue > 0 ? Math.max((m.revenue / maxRevenue) * 140, 4) : 4;
                             return (
-                                <div key={m.monthKey} className="flex-1 flex flex-col items-center gap-1 group relative">
+                                <div key={m.monthKey} className="flex-1 flex flex-col items-center justify-end group relative" style={{ height: 160 }}>
                                     <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity z-10">
                                         {m.month}: {formatPrice(m.revenue)}
                                     </div>
                                     <div
                                         className="w-full rounded-t-md transition-all duration-300 hover:opacity-80"
                                         style={{
-                                            height: `${Math.max(height, 2)}%`,
+                                            height: heightPx,
                                             background: m.revenue > 0 ? "linear-gradient(180deg, #2BBEE8 0%, #05073C 100%)" : "#e2e8f0",
                                         }}
                                     />
-                                    <span className="text-[9px] text-slate-400 truncate w-full text-center">
+                                    <span className="text-[9px] text-slate-400 truncate w-full text-center mt-1">
                                         {m.monthKey.split("-")[1]}
                                     </span>
                                 </div>
