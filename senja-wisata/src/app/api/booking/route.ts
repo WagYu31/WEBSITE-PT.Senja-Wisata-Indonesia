@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { snap, generateOrderId, generateBookingCode } from "@/lib/midtrans";
 import { RowDataPacket } from "mysql2";
 import { bookingStore } from "@/lib/bookingStore";
+import { createTransporter, SMTP_FROM } from "@/lib/email";
+import { bookingCreatedEmail } from "@/lib/emailTemplates";
 
 // GET: Fetch bookings for a specific user
 export async function GET(req: NextRequest) {
@@ -163,6 +165,30 @@ export async function POST(req: NextRequest) {
             snap_token: snapResponse.token,
             created_at: new Date().toISOString(),
         });
+
+        // Send booking confirmation email (non-blocking)
+        if (userEmail) {
+            try {
+                const emailData = bookingCreatedEmail({
+                    userName: userName || "Guest",
+                    bookingCode,
+                    tourTitle,
+                    tourDate,
+                    adults: Number(adults),
+                    children: Number(children || 0),
+                    totalPrice,
+                });
+                const transporter = createTransporter();
+                transporter.sendMail({
+                    from: SMTP_FROM,
+                    to: userEmail,
+                    subject: emailData.subject,
+                    html: emailData.html,
+                }).catch(err => console.error("[Booking] Email failed:", err));
+            } catch (emailErr) {
+                console.error("[Booking] Email setup failed:", emailErr);
+            }
+        }
 
         return NextResponse.json({
             success: true,
