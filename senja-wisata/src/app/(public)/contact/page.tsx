@@ -63,27 +63,27 @@ export default function ContactPage() {
 
                     {/* Google Maps Embed */}
                     <div className="lg:col-span-3">
-                        <div className="card overflow-hidden h-full min-h-[420px]">
-                            <div className="bg-slate-800 px-4 py-3 flex items-center gap-2">
-                                <div className="flex gap-1.5">
-                                    <span className="w-3 h-3 rounded-full bg-red-400" />
-                                    <span className="w-3 h-3 rounded-full bg-amber-400" />
-                                    <span className="w-3 h-3 rounded-full bg-emerald-400" />
+                        <div className="relative card overflow-hidden h-full min-h-[420px] rounded-2xl shadow-lg">
+                            {/* Floating address badge */}
+                            <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-sm rounded-xl px-4 py-2.5 shadow-md flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-pink-500 flex items-center justify-center">
+                                    <MapPin size={14} className="text-white" />
                                 </div>
-                                <span className="text-slate-400 text-xs ml-2 flex items-center gap-1.5">
-                                    <MapPin size={11} /> Jl. Wisata Indah No. 12, Jakarta Selatan
-                                </span>
+                                <div>
+                                    <p className="text-xs font-bold text-primary leading-tight">PT. Senja Wisata Indonesia</p>
+                                    <p className="text-[10px] text-slate-400">Jl. Wisata Indah No. 12, Jakarta Selatan</p>
+                                </div>
                             </div>
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2118559694!2d106.82719231476897!3d-6.236285695474396!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e9a55b9f21%3A0x46abcda69a760e52!2sJakarta%20Selatan%2C%20Kota%20Jakarta%20Selatan%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sid!2sid!4v1649123456789!5m2!1sid!2sid"
+                                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3966.2!2d106.8272!3d-6.2363!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f15.1!5e0!3m2!1sid!2sid"
                                 width="100%"
                                 height="100%"
-                                style={{ border: 0, minHeight: "380px" }}
+                                style={{ border: 0, minHeight: "420px" }}
                                 allowFullScreen
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
                                 title="Lokasi PT. Senja Wisata Indonesia"
-                                className="block"
+                                className="block rounded-2xl"
                             />
                         </div>
                     </div>
