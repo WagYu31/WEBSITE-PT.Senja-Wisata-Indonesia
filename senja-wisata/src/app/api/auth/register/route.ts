@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { RowDataPacket } from "mysql2";
 import bcrypt from "bcryptjs";
-import nodemailer from "nodemailer";
+import { createTransporter, SMTP_FROM } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
     try {
@@ -47,17 +47,10 @@ export async function POST(req: NextRequest) {
 
         // Send welcome email
         try {
-            const smtpUser = "adminsenja@fluentlya.com";
-            const smtpPass = "SenjaWisata2026";
-            const transporter = nodemailer.createTransport({
-                host: "mail.fluentlya.com",
-                port: 465,
-                secure: true,
-                auth: { user: smtpUser, pass: smtpPass },
-            });
+            const transporter = createTransporter();
 
             await transporter.sendMail({
-                from: `"Senja Wisata" <${smtpUser}>`,
+                from: SMTP_FROM,
                 to: email,
                 subject: "Selamat Datang di Senja Wisata Indonesia! 🌅",
                 html: `

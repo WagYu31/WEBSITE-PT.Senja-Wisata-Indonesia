@@ -1,22 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { RowDataPacket } from "mysql2";
-import nodemailer from "nodemailer";
-
-function createTransporter() {
-    const host = "mail.fluentlya.com";
-    const port = 465;
-    const user = "adminsenja@fluentlya.com";
-    const pass = "SenjaWisata2026";
-
-    return nodemailer.createTransport({
-        host,
-        port,
-        secure: port === 465,
-        auth: { user, pass },
-        tls: { rejectUnauthorized: false },
-    });
-}
+import { createTransporter, SMTP_FROM } from "@/lib/email";
 
 // POST: Send newsletter to all active subscribers
 export async function POST(req: NextRequest) {
@@ -63,7 +48,7 @@ export async function POST(req: NextRequest) {
             const promises = batch.map(async (email) => {
                 try {
                     await transporter.sendMail({
-                        from: `"Senja Wisata Indonesia" <${process.env.SMTP_USER}>`,
+                        from: SMTP_FROM,
                         to: email,
                         subject,
                         html: `

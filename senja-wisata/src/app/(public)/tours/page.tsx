@@ -98,6 +98,7 @@ export default function ToursPage() {
                         <input
                             type="text"
                             placeholder="Cari nama tour atau destinasi..."
+                            aria-label="Cari nama tour atau destinasi"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             className="form-input pl-11 shadow-sm"
@@ -114,13 +115,13 @@ export default function ToursPage() {
                         <option value="price-desc">Harga Tertinggi</option>
                     </select>
                     <div className="flex gap-2">
-                        <button onClick={() => setView("grid")} className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${view === "grid" ? "bg-primary text-white" : "bg-white text-slate-400 hover:bg-slate-100"}`}>
+                        <button onClick={() => setView("grid")} aria-label="Tampilan grid" className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${view === "grid" ? "bg-primary text-white" : "bg-white text-slate-400 hover:bg-slate-100"}`}>
                             <Grid size={18} />
                         </button>
-                        <button onClick={() => setView("list")} className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${view === "list" ? "bg-primary text-white" : "bg-white text-slate-400 hover:bg-slate-100"}`}>
+                        <button onClick={() => setView("list")} aria-label="Tampilan list" className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${view === "list" ? "bg-primary text-white" : "bg-white text-slate-400 hover:bg-slate-100"}`}>
                             <List size={18} />
                         </button>
-                        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center bg-white text-slate-500 hover:bg-slate-100">
+                        <button onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Buka filter" className="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center bg-white text-slate-500 hover:bg-slate-100">
                             <SlidersHorizontal size={18} />
                         </button>
                     </div>
@@ -130,9 +131,9 @@ export default function ToursPage() {
                     {/* Sidebar Filter */}
                     <aside className={`lg:block shrink-0 w-64 ${sidebarOpen ? "block" : "hidden"}`}>
                         <div className="card p-5 sticky top-24">
-                            <h3 className="font-bold text-base mb-4 flex items-center gap-2">
+                            <h2 className="font-bold text-base mb-4 flex items-center gap-2">
                                 <SlidersHorizontal size={16} className="text-blue" /> Filter Pencarian
-                            </h3>
+                            </h2>
 
                             {/* Category */}
                             <div className="mb-6">
@@ -154,14 +155,16 @@ export default function ToursPage() {
 
                             {/* Price Range */}
                             <div className="mb-6">
-                                <h4 className="font-semibold text-xs uppercase tracking-wider text-slate-400 mb-3">HARGA MAKSIMAL</h4>
+                                <label htmlFor="price-range" className="font-semibold text-xs uppercase tracking-wider text-slate-400 mb-3">HARGA MAKSIMAL</label>
                                 <input
+                                    id="price-range"
                                     type="range"
                                     min={0}
                                     max={30000000}
                                     step={500000}
                                     value={priceRange[1]}
                                     onChange={(e) => setPriceRange([0, Number(e.target.value)])}
+                                    aria-label={`Harga maksimal Rp ${(priceRange[1] / 1000000).toFixed(0)} juta`}
                                     className="w-full accent-accent"
                                 />
                                 <div className="flex justify-between text-xs text-slate-500 mt-1">

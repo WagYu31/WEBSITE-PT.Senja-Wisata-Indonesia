@@ -6,9 +6,10 @@ import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
 import {
     Home, Package, Heart, User, LogOut, Menu, X,
-    ChevronLeft, ChevronRight, Moon, Sun, Bell
+    ChevronLeft, ChevronRight, Moon, Sun
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import NotificationDropdown from "@/components/ui/NotificationDropdown";
 
 const navItems = [
     { href: "/dashboard", label: "Overview", icon: Home },
@@ -219,10 +220,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="p-2 rounded-xl hover:bg-slate-100/50 relative transition-all" style={{ color: textSub }}>
-                            <Bell size={18} />
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-                        </button>
+                        <NotificationDropdown role="user" userId={user?.id} textColor={textSub} dark={dark} />
                         <Link
                             href="/tours"
                             className="btn btn-primary btn-sm gap-2 text-xs lg:text-sm"

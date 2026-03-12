@@ -71,7 +71,16 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="font-sans antialiased bg-white text-primary-900">
-        {children}
+        {/* ISO 40500 / WCAG: Skip Navigation */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#05073C] focus:text-white focus:rounded-lg focus:text-sm focus:font-semibold"
+        >
+          Langsung ke konten utama
+        </a>
+        <div id="main-content" role="main" aria-label="Konten utama">
+          {children}
+        </div>
         <Script
           src={snapUrl}
           data-client-key={midtransClientKey}

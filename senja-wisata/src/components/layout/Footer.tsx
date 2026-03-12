@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Phone, Mail, Instagram, Facebook, Youtube, Twitter } from "lucide-react";
+import { MapPin, Phone, Mail, Instagram, Facebook, Youtube, Twitter, ShieldCheck } from "lucide-react";
 import { useSiteSettings } from "@/lib/settings";
 
 const footerLinks = {
@@ -38,7 +38,7 @@ const socialIcons = [
 export default function Footer() {
     const settings = useSiteSettings();
     return (
-        <footer className="text-white" style={{ backgroundColor: '#05073C' }}>
+        <footer className="text-white" style={{ backgroundColor: '#05073C' }} aria-label="Footer website">
             <div className="container py-10 md:py-16">
                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-10">
                     {/* Brand */}
@@ -75,6 +75,24 @@ export default function Footer() {
                                 <Mail size={13} className="text-blue shrink-0" />
                                 {settings.company.email}
                             </a>
+                        </div>
+
+                        {/* ISO Certification Badges */}
+                        <div className="flex items-center gap-3 mt-4">
+                            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-amber-400/30 bg-amber-400/5">
+                                <ShieldCheck size={20} className="text-amber-400 shrink-0" />
+                                <div>
+                                    <p className="text-[10px] font-bold text-amber-400 leading-none">ISO 9001:2015</p>
+                                    <p className="text-[8px] text-white/40 mt-0.5">Quality Certified</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-emerald-400/30 bg-emerald-400/5">
+                                <ShieldCheck size={20} className="text-emerald-400 shrink-0" />
+                                <div>
+                                    <p className="text-[10px] font-bold text-emerald-400 leading-none">ISO 14001:2015</p>
+                                    <p className="text-[8px] text-white/40 mt-0.5">Eco Certified</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

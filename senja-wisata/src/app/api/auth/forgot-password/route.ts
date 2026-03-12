@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { RowDataPacket } from "mysql2";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
+import { createTransporter, SMTP_FROM } from "@/lib/email";
 
 // In-memory fallback for reset tokens
 const g = globalThis as typeof globalThis & { __resetTokens?: Map<string, { email: string; expires: number }> };
@@ -53,20 +53,10 @@ export async function POST(req: NextRequest) {
             const resetLink = `${baseUrl}/reset-password?token=${token}`;
 
             try {
-                const smtpPass = 'SenjaWisata2026';
-                const smtpUser = 'adminsenja@fluentlya.com';
-                const transporter = nodemailer.createTransport({
-                    host: "mail.fluentlya.com",
-                    port: 465,
-                    secure: true,
-                    auth: {
-                        user: smtpUser,
-                        pass: smtpPass,
-                    },
-                });
+                const transporter = createTransporter();
 
                 await transporter.sendMail({
-                    from: `"Senja Wisata" <${smtpUser}>`,
+                    from: SMTP_FROM,
                     to: email,
                     subject: "Reset Password - Senja Wisata Indonesia",
                     html: `

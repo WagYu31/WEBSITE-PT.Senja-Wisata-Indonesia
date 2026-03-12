@@ -47,7 +47,7 @@ export default function Navbar() {
             )}
         >
             <div className="container">
-                <nav className="flex items-center justify-between h-20">
+                <nav className="flex items-center justify-between h-20" aria-label="Navigasi utama">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2.5 shrink-0">
                         <svg width="36" height="36" viewBox="0 0 38 38" fill="none">
@@ -114,6 +114,7 @@ export default function Navbar() {
                                 "relative hidden sm:flex items-center justify-center w-10 h-10 rounded-full transition-all",
                                 transparent ? "text-white hover:bg-white/10" : "text-slate-600 hover:bg-slate-100"
                             )}
+                            aria-label="Wishlist"
                         >
                             <Heart size={20} />
                             {isAuthenticated && wishlistItems.length > 0 && (
@@ -191,6 +192,8 @@ export default function Navbar() {
                                 transparent ? "text-white hover:bg-white/10" : "text-primary hover:bg-slate-100"
                             )}
                             onClick={() => setMobileOpen((v) => !v)}
+                            aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
+                            aria-expanded={mobileOpen}
                         >
                             {mobileOpen ? <X size={22} /> : <Menu size={22} />}
                         </button>

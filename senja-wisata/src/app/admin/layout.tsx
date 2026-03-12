@@ -6,9 +6,10 @@ import { useAuthStore } from "@/store/auth";
 import { useEffect, useState, useCallback } from "react";
 import {
     LayoutDashboard, Package, BookOpen, Users,
-    LogOut, ChevronRight, Menu, X, Bell, Crown, Settings, MessageSquare, Mail
+    LogOut, ChevronRight, Menu, X, Crown, Settings, MessageSquare, Mail
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import NotificationDropdown from "@/components/ui/NotificationDropdown";
 
 const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -231,10 +232,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="relative w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors">
-                            <Bell size={16} className="text-slate-400" />
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-                        </button>
+                        <NotificationDropdown role={user?.role === "owner" ? "owner" : "admin"} />
                         <Link href="/" className="hidden sm:flex btn btn-outline btn-sm gap-1.5 text-xs py-1.5">
                             ← Ke Website
                         </Link>

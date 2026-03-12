@@ -87,6 +87,26 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
   }
+
+  /* ISO 40500 / WCAG: Focus indicators for keyboard navigation */
+  *:focus-visible {
+    outline: 2px solid #2BBEE8;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ISO 40500 / WCAG: Screen reader only */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
 }
 
 @layer components {
